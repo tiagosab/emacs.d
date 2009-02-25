@@ -1,14 +1,7 @@
+;; -*- lisp -*-
 ;; My self
 (setq user-full-name "Tiago Saboga")
 (setq user-mail-address "tiagosaboga@gmail.com")
-
-;; Enable syntax highlighting
-
-(global-font-lock-mode t)
-(setq font-lock-maximum-decoration t)
-
-;; set utf8 input
-(set-keyboard-coding-system 'mule-utf-8)
 
 (custom-set-variables
   ;; custom-set-variables was added by Custom.
@@ -18,6 +11,8 @@
  '(ecb-options-version "2.32")
  '(home-end-enable t)
  '(ibuffer-enable t)
+ '(ibuffer-saved-filter-groups (quote (("ts-basic" ("lisp" (mode . lisp-mode)) ("omegat" (filename . ".*megat.*")) ("Internal" (name . "\\*.*"))))))
+ '(ibuffer-saved-filters (quote (("gnus" ((or (mode . message-mode) (mode . mail-mode) (mode . gnus-group-mode) (mode . gnus-summary-mode) (mode . gnus-article-mode)))) ("programming" ((or (mode . emacs-lisp-mode) (mode . cperl-mode) (mode . c-mode) (mode . java-mode) (mode . idl-mode) (mode . lisp-mode)))))))
  '(jde-jdk-registry (quote (("1.5" . "/usr/lib/jvm/java-1.5.0-sun-1.5.0.11"))))
  '(large-file-warning-threshold 20000000)
  '(load-home-init-file t t)
@@ -49,18 +44,22 @@
 
 (global-set-key [ (meta /) ] 'hippie-expand)
 
+(global-set-key [ (control x) (control d) ] 'dired)
+
 ;; easy commenting out of lines
 (autoload 'comment-out-region "comment" nil t)
 (global-set-key "\C-cq" 'comment-out-region)
+
+
+;; ===========================
+;; Appearance
+;; ===========================
 
 ;; display the current time
 (display-time)
 
 ;; Show column number at bottom of screen
 (column-number-mode 1)
-
-;; alias y to yes and n to no
-(defalias 'yes-or-no-p 'y-or-n-p)
 
 ;; highlight matches from searches
 (setq isearch-highlight t)
@@ -74,12 +73,37 @@
 ;; Behaviour
 ;; ===========================
 
+(defun find-alternative-file-with-sudo ()
+  (interactive)
+  (when buffer-file-name
+    (find-alternate-file
+     (concat "/su::"
+	     buffer-file-name))))
+
+(global-set-key (kbd "C-x C-r") 'find-alternative-file-with-sudo)
+
+;; alias y to yes and n to no
+(defalias 'yes-or-no-p 'y-or-n-p)
+
+;; Enable syntax highlighting
+(global-font-lock-mode t)
+(setq font-lock-maximum-decoration t)
+
+;; Enable paren-mode
+(show-paren-mode t)
+
+;; set utf8 input
+(set-keyboard-coding-system 'mule-utf-8)
+
 ;; Pgup/dn will return exactly to the starting point.
 (setq scroll-preserve-screen-position 1)
 
 ;; don't automatically add new lines when scrolling down at
 ;; the bottom of a buffer
 (setq next-line-add-newlines nil)
+
+;; indent with spaces only
+(setq-default indent-tabs-mode nil)
 
 ;; scroll just one line when hitting the bottom of the window
 (setq scroll-step 1)
@@ -94,15 +118,42 @@
 ;; turn off the toolbar
 (tool-bar-mode -1)
 
+;; no scroll bar
+(scroll-bar-mode -1)
+
+;; ===========================
+;; Hooks
+;; ===========================
+
 ;; turn on word wrapping in text mode
 (add-hook 'text-mode-hook 'turn-on-auto-fill)
 
-;; indent with spaces only
-(setq-default indent-tabs-mode nil)
+;; turn on longlines-mode in text mode
+;; (add-hook 'text-mode-hook 'longlines-mode)
 
-;; load debian copyright mode
-(load "/home/tiago/.emacs.d/debian-mr-copyright-mode.el")
-;; (load "python")
+;; ===========================
+;; Load stuff
+;; ===========================
+
+
+
+;;; Emacs Load Path
+;;(setq load-path (cons "~/lib/emacs" load-path))
+(add-to-list 'load-path "~/lib/emacs")
+(add-to-list 'load-path "~/lib/emacs/http")
+(add-to-list 'load-path "~/lib/emacs/ljupdate-read-only/")
+
+(load-library "tiago")
+(require 'ljupdate)
+
+;;; load debian copyright mode
+;; (load "/home/tiago/.emacs.d/debian-mr-copyright-mode.el")
+;; (load "debian-mr-copyright-mode")
+(autoload 'debian-mr-copyright-mode "debian-mr-copyright-mode"
+  "Major mode for editing machine-readable copyright files (i.e. debian/copyright)."
+  t)
+
+(autoload 'tr-get-page "tresor" "Chercher une définition dans le trésor" t)
 
 ;; add support for recent files list
 ;; recentf stuff
@@ -110,3 +161,4 @@
 ;;(recentf-mode 1)
 ;;(setq recentf-max-menu-items 25)
 ;;(global-set-key "\C-x\ \C-r" 'recentf-open-files)
+(put 'erase-buffer 'disabled nil)
