@@ -16,7 +16,6 @@
 ;;; Trésor
 (require 'url)
 (require 'button)
-(require 'mime)
 
 (defgroup tresor nil "Dictionnaire Trésor de la Langue Française"
   :group 'dict)
@@ -245,29 +244,28 @@ This guess is based on the text surrounding the cursor."
         (substring word 0 (match-beginning 0))
       word)))
 
+(defun trs-get-charset-from-url-buffer ( buffer )
+  (save-excursion
+    (set-buffer buffer)
+    (beginning-of-buffer)
+    (re-search-forward "^Content-Type: text/html; charset=\\(.*\\)$")
+;    (re-search-forward "Content-Type: text/html; charset=\\(.*\\)")
+;    (re-search-forward "Content")
+    (match-string 1)))
+
 (defun trs-process-page ( &rest args )
   (let ((buffer (current-buffer))
         (tr-buffer (get-buffer-create "*Trésor*"))
         )
     (set-buffer tr-buffer)
-    (let ((inhibit-read-only t))
-      (fundamental-mode)
-      (erase-buffer)
-      (let ((mimemsg (mime-parse-buffer buffer)))
-        (mime-insert-entity-body mimemsg)
-        (let (charset
-              (params (mime-entity-parameters mimemsg)))
-          (while (and (not charset)
-                      params)
-            (let ((param (car params)))
-              (if (equal (car param)
-                         "charset")
-                  (setq charset (cdr param))
-                (setq params (cdr params)))))
-          (decode-coding-region (point-min) 
-                                (point-max) 
-                                (coding-system-from-name charset))
-          )))
+    (let ((inhibit-read-only t)
+          (charset-name (trs-get-charset-from-url-buffer buffer)))
+      (kill-all-local-variables)
+      (insert-buffer-substring buffer)
+      (decode-coding-region (point-min) 
+                            (point-max) 
+                            (coding-system-from-name charset-name))
+          )
     (pop-to-buffer tr-buffer)
     (tresor-mode)))
 
@@ -311,7 +309,7 @@ remarques, bibliographie, statistiques, étymologie)."
   (trs-toggle-by-type '("tlf_parothers")))
 
 (defun trs-toggle-minimal ()
-  "Toggle visibility of every buffer but definitions and headers"
+  "Toggle visibility of every part but definitions and headers"
   (interactive)
   (trs-toggle-by-type '("tlf_cexemple"
                         "tlf_cauteur"
