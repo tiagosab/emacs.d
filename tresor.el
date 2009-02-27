@@ -21,7 +21,7 @@
     (require 'coding-system-from-name))
 
 (defgroup tresor nil "Dictionnaire Trésor de la Langue Française"
-  :group 'dict)
+  :group 'applications)
 
 (defcustom tresor-entry-face 'font-lock-function-name-face
   "The face to use to highlight the current entry"
@@ -116,6 +116,8 @@
 - tlf_ctitre - du livre de l'exemple
 - tlf_cdate - date du livre de l'exemple"
     )
+  (defvar tresor-footer-categories-faces
+    (list (list "footer" nil hard-newline)))
   )
 
 (define-derived-mode tresor-mode text-mode "Trésor"
@@ -174,7 +176,7 @@ h / ? - display this help
   (trs-delete-until "<div id=\"contentbox.*?>")
   (trs-parse-subtree tresor-contents-categories-faces)
   (trs-delete-until "<div id=\"footer\">")
-  (trs-parse-subtree nil)
+  (trs-parse-subtree tresor-footer-categories-faces)
   (delete-region (point) (point-max))
 )
 
@@ -252,8 +254,6 @@ This guess is based on the text surrounding the cursor."
     (set-buffer buffer)
     (beginning-of-buffer)
     (re-search-forward "^Content-Type: text/html; charset=\\(.*\\)$")
-;    (re-search-forward "Content-Type: text/html; charset=\\(.*\\)")
-;    (re-search-forward "Content")
     (match-string 1)))
 
 (defun trs-process-page ( &rest args )
