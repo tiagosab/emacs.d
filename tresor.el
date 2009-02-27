@@ -17,6 +17,9 @@
 (require 'url)
 (require 'button)
 
+(if (< emacs-major-version 23)
+    (require 'coding-system-from-name))
+
 (defgroup tresor nil "Dictionnaire Trésor de la Langue Française"
   :group 'dict)
 
@@ -262,9 +265,10 @@ This guess is based on the text surrounding the cursor."
           (charset-name (trs-get-charset-from-url-buffer buffer)))
       (kill-all-local-variables)
       (insert-buffer-substring buffer)
-      (decode-coding-region (point-min) 
-                            (point-max) 
-                            (coding-system-from-name charset-name))
+      (recode-region (point-min) 
+                     (point-max) 
+                     (coding-system-from-name charset-name)
+                     default-buffer-file-coding-system)
           )
     (pop-to-buffer tr-buffer)
     (tresor-mode)))
@@ -314,8 +318,7 @@ remarques, bibliographie, statistiques, étymologie)."
   (trs-toggle-by-type '("tlf_cexemple"
                         "tlf_cauteur"
                         "tlf_parsynt"
-                        "tlf_parothers"
-                        "tlf_csyntagme")))
+                        "tlf_parothers")))
 
 (defun trs-all-visible ()
   "View all parts of definition"
