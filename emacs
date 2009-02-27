@@ -144,6 +144,7 @@
 (add-to-list 'load-path "~/lib/emacs/ljupdate-read-only/")
 
 (load-library "tiago")
+(load-library "tresor")
 (require 'ljupdate)
 
 ;;; load debian copyright mode
