@@ -146,6 +146,7 @@
 (load-library "tiago")
 (load-library "tresor")
 (require 'ljupdate)
+(require 'tc)
 
 ;;; load debian copyright mode
 ;; (load "/home/tiago/.emacs.d/debian-mr-copyright-mode.el")
@@ -158,8 +159,9 @@
 
 ;; add support for recent files list
 ;; recentf stuff
-;;(require 'recentf)
-;;(recentf-mode 1)
-;;(setq recentf-max-menu-items 25)
-;;(global-set-key "\C-x\ \C-r" 'recentf-open-files)
+;(require 'recentf)
+;(recentf-mode 1)
+;(setq recentf-max-menu-items 25)
+;(global-set-key "\C-x\ \C-r" 'recentf-open-files)
+
 (put 'erase-buffer 'disabled nil)
