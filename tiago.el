@@ -80,41 +80,6 @@ expand wildcards (if any) and visit multiple files."
 	(mapcar 'switch-to-buffer (nreverse value))
       (switch-to-buffer value))))
 
-(defvar ts-important-buffers '() )
-;; (setq ts-important-buffers '() )
-;; (setq debug-on-quit nil)
-
-(defun ts-mark-current-buffer-as-important ()
-  "Toggle important mark on current buffer."
-  (interactive)
-  (let ((buffer (current-buffer)))
-    (if (memq buffer ts-important-buffers)
-        (setq ts-important-buffers (delq buffer ts-important-buffers))
-      (add-to-list 'ts-important-buffers buffer))))
-
-;;(type-of ts-important-buffers)
-;;(message "%s" (get-buffer-window "tiago.el"))
-
-(defun ts-goto-next-important-buffer ()
-  "Go to next buffer marked as important.
-TODO: cycle through all buffers, not only the first ones."
-  (interactive)
-  (let (important-buffers)
-    (while ts-important-buffers
-      (let (nextbuffer)
-        (setq nextbuffer (pop ts-important-buffers))
-        (add-to-list 'important-buffers nextbuffer)
-        (if (not (get-buffer-window nextbuffer))
-            (progn
-              (pop-to-buffer nextbuffer)
-              (if ts-important-buffers
-                  (progn
-                    (setq important-buffers 
-                          (nconc important-buffers ts-important-buffers))
-                    ; stop while loop if then-clause is executed
-                    (setq ts-important-buffers '())))))))
-    (setq ts-important-buffers important-buffers)))
-
 (defun ts-find-file-read-args (prompt mustmatch)
   (list (let ((find-file-default (ts-get-filename-at-point)))
           (minibuffer-with-setup-hook
