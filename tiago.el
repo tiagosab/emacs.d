@@ -1,5 +1,9 @@
 (provide 'tiago)
 
+(defun ts-remove-line-breaks (from to)
+  (interactive r)
+)
+
 (defun ts-alunos (aluno)
   (interactive "sAluno: ")
   (find-file (concat "/home/tiago/home/aulasfran/alunos/" aluno "/Notes.muse"))
