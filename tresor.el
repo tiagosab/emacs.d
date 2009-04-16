@@ -194,7 +194,7 @@ h / ? - display this help
       (setq working t)
       (let ((data (match-string 0)))
         (delete-region (match-beginning 0) (match-end 0))
-        (if (match-string 1)
+        (if (match-string 1) ; we have a closing tag
             (let ((current (car subitems)))
               (let ((beg (car current))
                     (tag-open (car (cdr current)))
@@ -263,6 +263,7 @@ This guess is based on the text surrounding the cursor."
     (set-buffer tr-buffer)
     (let ((inhibit-read-only t)
           (charset-name (trs-get-charset-from-url-buffer buffer)))
+      (erase-buffer)
       (kill-all-local-variables)
       (insert-buffer-substring buffer)
       (recode-region (point-min) 
