@@ -1,4 +1,4 @@
-;; -*- lisp -*-
+;; -*- emacs-lisp -*-
 ;; My self
 (setq user-full-name "Tiago Saboga")
 (setq user-mail-address "tiagosaboga@gmail.com")
@@ -130,6 +130,34 @@
 
 ;; turn on longlines-mode in text mode
 ;; (add-hook 'text-mode-hook 'longlines-mode)
+
+
+;; ==============================
+;; TeX / LaTeX / AucTeX
+;; ==============================
+
+(setq TeX-global-PDF-mode t)
+
+;; ==============================
+;; Mail
+;; ==============================
+
+; The default send-mail-function , sendmail-send-it, uses local
+; sendmail (which would be could, since I have esmtp configured
+; locally), but it provides no way to add custom options to sendmail
+; (which I need, since my conf file is not in the normal place. So, I
+; have to use the internal smtp handler.
+
+(setq send-mail-function 'smtpmail-send-it)
+
+(setq mail-user-agent 'message-user-agent)
+(setq message-send-mail-function 'smtpmail-send-it)
+
+; configure smtp to use gmail.
+(setq smtpmail-smtp-server "smtp.gmail.com")
+(setq smtpmail-smtp-service 25)
+(setq smtpmail-auth-credentials '(("smtp.gmail.com" 25 "tiagosaboga@gmail.com" "rvdc25")))
+(setq smtpmail-starttls-credentials '(("smtp.gmail.com" 25 nil nil)))
 
 ;; ===========================
 ;; Load stuff
