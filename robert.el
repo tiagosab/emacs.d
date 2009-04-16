@@ -14,22 +14,48 @@
  ;; Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 ;;; Robert
-(require 'url)
 (require 'button)
-
-(if (< emacs-major-version 23)
-    (require 'coding-system-from-name))
 
 (defgroup robert nil "Dictionnaire - Le Grand Robert"
   :group 'applications)
 
 (defcustom robert-entry-face 'font-lock-function-name-face
-  "The face to use to highlight the current entry"
+  "The face to use to highlight the current entry <s>"
   :type 'face
   :group 'robert)
 
-(defcustom robert-example-face 'font-lock-comment-face
-  "The face to use to highlight examples"
+(defcustom robert-meaning-face 'font-lock-constant-face
+  "The face to use to highlight the current meaning <e>"
+  :type 'face
+  :group 'robert)
+
+(defcustom robert-definition-face 'font-lock-keyword-face
+  "The face to use to highlight definitions <d>"
+  :type 'face
+  :group 'robert)
+
+(defcustom robert-citation-face 'font-lock-builtin-face
+  "The face to use to highlight <c>"
+  :type 'face
+  :group 'robert)
+
+(defcustom robert-author-face 'font-lock-preprocessor-face
+  "The face to use to highlight <a>"
+  :type 'face
+  :group 'robert)
+
+(defcustom robert-x2-face 'font-lock-comment-face
+  "The face to use to highlight <x2>"
+  :type 'face
+  :group 'robert)
+
+(defcustom robert-x3-face 'font-lock-doc-face
+  "The face to use to highlight <x3>"
+  :type 'face
+  :group 'robert)
+
+(defcustom robert-x4-face 'font-lock-function-name-face
+  "The face to use to highlight <x4>"
   :type 'face
   :group 'robert)
 
@@ -40,21 +66,6 @@
 
 (defcustom robert-italic-face (list :slant 'italic)
   "The face to use to highlight italic text"
-  :type 'face
-  :group 'robert)
-
-(defcustom robert-author-face (list :weight 'ultra-bold)
-  "The face to use to highlight example's authors names"
-  :type 'face
-  :group 'robert)
-
-(defcustom robert-sup-face ()
-  "The face to use to highlight example's authors names"
-  :type 'face
-  :group 'robert)
-
-(defcustom robert-definition-face 'font-lock-keyword-face
-  "The face to use to highlight definitions"
   :type 'face
   :group 'robert)
 
@@ -84,31 +95,21 @@
     map))
 
 (let ((hard-newline (propertize "\n" 'hard t)))
-  (defvar robert-vtoolbar-categories-faces
-    (list (list "vitemselected" 'rob-delete-region)
-          (list "<a href" 'rob-make-button nil hard-newline)
-          (list "<sup>" robert-sup-face " [" "]")
-          ))
-  
-  (defvar robert-contents-categories-faces
-    (list (list "<s>" robert-definition-face "   ")
-          (list "<e>" robert-entry-face)
-          (list "<x2>" robert-definition-face)
-          (list "<x3>" robert-definition-face)
-          (list "<x4>" robert-definition-face)
+  (setq robert-contents-categories-faces
+;  (defvar robert-contents-categories-faces
+    (list (list "<s>" robert-entry-face)
+          (list "<e>" robert-meaning-face); hard-newline)
+          (list "<d>"); robert-definition-face)
+          (list "<c>" 'rob-parse-citation "      "); (concat hard-newline "      "))
+          (list "<a>" robert-author-face "        ") ;(concat hard-newline "        ") hard-newline)
+          (list "<x2>" robert-x2-face)
+          (list "<x3>" robert-x3-face)
+          (list "<x4>" robert-x4-face)
           (list "<b>" robert-bold-face)
           (list "<i>" robert-italic-face)
-          (list "<d>" robert-sup-face " [" "]")
-          (list "<n>" robert-author-face "   ")
-          (list "<c>" nil hard-newline)
-          (list "tlf_tabulation" nil hard-newline)
-          (list "tlf_parsynt" nil (concat hard-newline "      "))
-          (list "tlf_paraputir" nil hard-newline)
-          (list "tlf_parothers" nil hard-newline) ; remarques, éthymologie, bibliographie, statistiques
-          (list "tlf_contentbox" nil hard-newline)
-          (list "tlf_csyntagme")
+          (list "<n>" nil "   ")
           )
-    "Please document me."
+;    "Please document me."
     )
   (defvar robert-footer-categories-faces
     (list (list "footer" nil hard-newline)))
@@ -131,28 +132,39 @@ RET - search the trésor for the selected word
 h / ? - display this help
 "
   (let ((inhibit-read-only t))
+    (remove-hook 'text-mode-hook 'turn-on-auto-fill t)
     (beginning-of-buffer)
-    (rob-make-invisible-parts)
+    (rob-parse-subtree robert-contents-categories-faces)
     (make-local-variable 'fill-nobreak-invisible)
     (setq fill-nobreak-invisible t)
-    (set (make-local-variable 'fill-nobreak-predicate) (cons 'fill-french-nobreak-p fill-nobreak-predicate))
-    (use-hard-newlines t)
-    (fill-region (point-min) (point-max))
+    (set (make-local-variable 'fill-nobreak-predicate) 
+         (cons 'fill-french-nobreak-p fill-nobreak-predicate))
+    (set (make-local-variable 'paragraph-start)
+         ".")
+    (set (make-local-variable 'paragraph-separate)
+         "--- This regexp must never match ---")
+;    (use-hard-newlines t)
+    (set (make-local-variable 'adaptive-fill-mode) t)
+    ;(fill-region (point-min) (point-max))
+    (fill-individual-paragraphs (point-min) (point-max))
     (toggle-read-only t)
     )
   (beginning-of-buffer)
 )
 
+(defun rob-parse-citation(beg end cat)
+  (save-excursion
+    (goto-char beg)
+    (while (re-search-forward "\n[ \t]*" end t)
+      ;(message "matched")
+      (replace-match "\n      ")))
+  (let ((overlay (make-overlay beg end)))
+    (overlay-put overlay 'face robert-citation-face)
+    (overlay-put overlay 'cat cat)
+    ))
+
 (defun rob-delete-region (beg end &rest args)
   (delete-region beg end))
-
-(defun rob-make-button (beg end tag-open)
-  (string-match "\/definition\/[^']+" tag-open)
-  (make-button beg end 'action 'robert-open 'link (match-string 0 tag-open)))
-
-(defun robert-open (button)
-  (let ((link (button-get button 'link)))
-    (url-retrieve (concat "http://www.cnrtl.fr" link) 'rob-process-page )))
 
 (defun rob-delete-until (regexp)
   (let ((beg (point)))
@@ -163,64 +175,46 @@ h / ? - display this help
           ))
     ))
 
-(defun rob-make-invisible-parts ()
-  (rob-delete-until "<div id=\"vtoolbar.*?>")
-  (rob-parse-subtree robert-vtoolbar-categories-faces)
-  (rob-delete-until "<div id=\"contentbox.*?>")
-  (rob-parse-subtree robert-contents-categories-faces)
-  (rob-delete-until "<div id=\"footer\">")
-  (rob-parse-subtree robert-footer-categories-faces)
-  (delete-region (point) (point-max))
-)
+;; (defun rob-make-invisible-parts ()
+;;   (rob-parse-subtree robert-contents-categories-faces)
+;; )
 
 (defun rob-parse-subtree (categories-faces)
-  (let (subitems ; list of (beginning tag-open (category-face)) lists
-        (working nil))
-    (while (and
-            (or
-             (not working)
-             (> (length subitems) 0))
-            (search-forward-regexp "<\\(/\\)?.*?>"
-                                  nil ; not bound
-                                  t ; if fail, just return nil (no error)
-                                  ))
-      (setq working t)
+  (let (subitems) ; list of (beginning tag-open (category-face)) lists
+    (while
+        (search-forward-regexp "<.*?>"
+                               nil ; not bound
+                               "tolimit" ; if fail, move to limit (no error)
+                               );)
       (let ((data (match-string 0)))
         (delete-region (match-beginning 0) (match-end 0))
-        (if (match-string 1)
-            (let ((current (car subitems)))
-              (let ((beg (car current))
-                    (tag-open (car (cdr current)))
-                    (cat-face (car (cdr (cdr current)))))
-                (when (car cat-face)
-                  (if (functionp (nth 1 cat-face))
-                      (funcall (nth 1 cat-face) beg (point) tag-open)
-                    (let ((overlay (make-overlay beg (point))))
-                      (overlay-put overlay 'face (nth 1 cat-face))
-                      (overlay-put overlay 'cat (nth 0 cat-face))
-                      )))
-                      ;(overlay-put overlay 'before-string (nth 2 cat-face)) ; using overlays here prevents normal movement
-                      ;(overlay-put overlay 'after-string (nth 3 cat-face)) ;  and does not change filling
-                (if (nth 3 cat-face)
-                    (insert (nth 3 cat-face)))
-                (setq subitems (cdr subitems))
-                ))
-          (if (not (string-match "/>" data))
-              (let ((item)
-                    (counter 0))
-                (while (not item)
-                  (let ((cat-face (nth counter categories-faces)))
-                    (if (nth 0 cat-face)
-                        (if (string-match (nth 0 cat-face) data)
-                            (setq item cat-face)
-                          (setq counter (+ 1 counter)))
-                      (setq item '(nil nil)))))
-                (if (nth 2 item)
-                    (insert (nth 2 item)))
-                (setq subitems (cons (list (point-marker) data item) subitems))
-                )
-            (if (string-match "<br/>" data)
-                (insert "\n"))
+        (let ((current (car subitems)))
+          (let ((beg (car current))
+                (tag-open (car (cdr current)))
+                (cat-face (car (cdr (cdr current)))))
+            (when (car cat-face)
+              (if (functionp (nth 1 cat-face))
+                  (funcall (nth 1 cat-face) beg (point-marker) tag-open)
+                (let ((overlay (make-overlay beg (point))))
+                  (overlay-put overlay 'face (nth 1 cat-face))
+                  (overlay-put overlay 'cat (nth 0 cat-face))
+                  ))
+              (when (nth 3 cat-face)
+                (insert (nth 3 cat-face))))
+            (setq subitems (cdr subitems))
+            (let ((item)
+                  (counter 0))
+              (while (not item)
+                (let ((cat-face (nth counter categories-faces)))
+                  (if (nth 0 cat-face)
+                      (if (string-match (nth 0 cat-face) data)
+                          (setq item cat-face)
+                        (setq counter (+ 1 counter)))
+                    (setq item '(nil nil)))))
+              (if (nth 2 item)
+                  (insert (nth 2 item)))
+              (setq subitems (cons (list (point-marker) data item) subitems))
+              )
             ))))))
 
 (defun robert-test ()
@@ -254,10 +248,14 @@ This guess is based on the text surrounding the cursor."
         (tr-buffer (get-buffer-create "*Robert*"))
         )
     (set-buffer tr-buffer)
-    (erase-buffer)
-    (call-process "derobeur.py" nil t nil word)
-    (pop-to-buffer tr-buffer)))
-;    (robert-mode)))
+    (let ((inhibit-read-only t))
+      (auto-fill-mode nil)
+      (erase-buffer)
+      (kill-all-local-variables)
+      (call-process "derobeur.py" nil t nil word)
+      (pop-to-buffer tr-buffer))
+;;))
+    (robert-mode)))
 
 (defun robert (word)
   "Fetch the page from Robert"
