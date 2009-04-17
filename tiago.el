@@ -1,5 +1,13 @@
 (provide 'tiago)
 
+(defun ts-emacs ()
+  (interactive)
+  (find-file "/home/tiago/src/elisp/repo/tiago.el"))
+
+(defun ts-latex ()
+  (interactive)
+  (find-file "/home/tiago/var/rautu/latex.tex"))
+
 (defun ts-remove-line-breaks (from to)
   (interactive r)
 )
