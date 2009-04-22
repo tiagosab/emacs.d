@@ -50,6 +50,7 @@
 (autoload 'comment-out-region "comment" nil t)
 (global-set-key "\C-cq" 'comment-out-region)
 
+(global-set-key "\C-xf" 'find-function)
 
 ;; ===========================
 ;; Appearance
@@ -131,6 +132,9 @@
 ;; turn on longlines-mode in text mode
 ;; (add-hook 'text-mode-hook 'longlines-mode)
 
+;; replace auto-fill by longlines-mode in logjam
+(add-hook 'lj-mode-hook 'turn-off-auto-fill)
+(add-hook 'lj-compose-header-mode-hook 'longlines-mode)
 
 ;; ==============================
 ;; TeX / LaTeX / AucTeX
@@ -162,8 +166,6 @@
 ;; ===========================
 ;; Load stuff
 ;; ===========================
-
-
 
 ;;; Emacs Load Path
 ;;(setq load-path (cons "~/lib/emacs" load-path))
