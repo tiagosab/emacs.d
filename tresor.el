@@ -195,24 +195,37 @@ h / ? - display this help
       (let ((data (match-string 0)))
         (delete-region (match-beginning 0) (match-end 0))
         (if (match-string 1) ; we have a closing tag
-            (let ((current (car subitems)))
-              (let ((beg (car current))
-                    (tag-open (car (cdr current)))
-                    (cat-face (car (cdr (cdr current)))))
-                (when (car cat-face)
-                  (if (functionp (nth 1 cat-face))
-                      (funcall (nth 1 cat-face) beg (point) tag-open)
+            (let ((current (car subitems))) ; it closes "current" tag
+              (let ((beg (car current)) ; "beg" is the beginning of
+                                        ; region
+                    (tag-open (car (cdr current))) ; "tag-open" is the
+                                        ; entire string which opened
+                                        ; the "current" tag
+                    (cat-face (car (cdr (cdr current))))) ; "cat-face"
+                                        ; is the association of the
+                                        ; category corresponding to
+                                        ; "current" tag, faces, and
+                                        ; possibly insertion of
+                                        ; strings
+                (when (car cat-face) ; if this association indicates a
+                                     ; face
+                  (if (functionp (nth 1 cat-face)) ; if this face is
+                                         ; in fact a function
+                      (funcall (nth 1 cat-face) beg (point) tag-open) 
+                                        ; call this function
                     (let ((overlay (make-overlay beg (point))))
+                                        ; else, apply the face
+                                        ; (through an overlay)
                       (overlay-put overlay 'face (nth 1 cat-face))
                       (overlay-put overlay 'cat (nth 0 cat-face))
                       )))
-                      ;(overlay-put overlay 'before-string (nth 2 cat-face)) ; using overlays here prevents normal movement
-                      ;(overlay-put overlay 'after-string (nth 3 cat-face)) ;  and does not change filling
-                (if (nth 3 cat-face)
-                    (insert (nth 3 cat-face)))
-                (setq subitems (cdr subitems))
+                (if (nth 3 cat-face) ; if the cat-face asks,
+                    (insert (nth 3 cat-face))) ; add a string at the
+                                               ; end
+                (setq subitems (cdr subitems)) ; we are done with this
+                                               ; tag.
                 ))
-          (if (not (string-match "/>" data))
+          (if (not (string-match "/>" data)) ; starting a new tag
               (let ((item)
                     (counter 0))
                 (while (not item)
