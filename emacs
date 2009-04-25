@@ -26,37 +26,6 @@
   ;; If there is more than one, they won't work right.
  )
 
-;; ============================
-;; Key mappings
-;; ============================
-
-(setq ctl-ç-map (make-sparse-keymap))
-(defalias 'ctl-ç-prefix ctl-ç-map)
-(global-set-key (kbd "C-ç") 'ctl-ç-prefix)
-(define-key ctl-ç-map "(" 'ts-corr-paren)
-
-;; use F1 key to go to a man page
-(global-set-key [f1] 'man)
-;; use F3 key to kill current buffer
-(global-set-key [f3] 'kill-this-buffer)
-;; use F5 to get help (apropos)
-(global-set-key [f5] 'apropos)
-;; use F9 to open files in hex mode
-(global-set-key [f9] 'hexl-find-file)
-
-;; goto line function C-c C-g
-(global-set-key [ (control c) (control g) ] 'goto-line)
-
-(global-set-key [ (meta /) ] 'hippie-expand)
-
-(global-set-key [ (control x) (control d) ] 'dired)
-
-;; easy commenting out of lines
-(autoload 'comment-out-region "comment" nil t)
-(global-set-key "\C-cq" 'comment-out-region)
-
-(global-set-key "\C-xf" 'find-function)
-
 ;; ===========================
 ;; Appearance
 ;; ===========================
@@ -201,3 +170,35 @@
 ;(global-set-key "\C-x\ \C-r" 'recentf-open-files)
 
 (put 'erase-buffer 'disabled nil)
+
+;; ============================
+;; Key mappings
+;; ============================
+
+(setq ctl-ç-map (make-sparse-keymap))
+(defalias 'ctl-ç-prefix ctl-ç-map)
+(global-set-key (kbd "C-ç") 'ctl-ç-prefix)
+(define-key ctl-ç-map "(" 'ts-corr-paren)
+
+;; use F1 key to go to a man page
+(global-set-key [f1] 'man)
+;; use F3 key to kill current buffer
+(global-set-key [f3] 'kill-this-buffer)
+;; use F5 to get help (apropos)
+(global-set-key [f5] 'apropos)
+;; use F9 to open files in hex mode
+(global-set-key [f9] 'hexl-find-file)
+
+;; goto line function C-c C-g
+(global-set-key [ (control c) (control g) ] 'goto-line)
+
+(global-set-key [ (meta /) ] 'hippie-expand)
+
+(global-set-key [ (control x) (control d) ] 'dired)
+
+;; easy commenting out of lines
+(autoload 'comment-out-region "comment" nil t)
+(global-set-key "\C-cq" 'comment-out-region)
+
+(global-set-key "\C-xf" 'find-function)
+
