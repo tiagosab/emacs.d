@@ -48,15 +48,6 @@
 ;; Behaviour
 ;; ===========================
 
-(defun find-alternative-file-with-sudo ()
-  (interactive)
-  (when buffer-file-name
-    (find-alternate-file
-     (concat "/su::"
-	     buffer-file-name))))
-
-(global-set-key (kbd "C-x C-r") 'find-alternative-file-with-sudo)
-
 ;; alias y to yes and n to no
 (defalias 'yes-or-no-p 'y-or-n-p)
 
@@ -201,4 +192,6 @@
 (global-set-key "\C-cq" 'comment-out-region)
 
 (global-set-key "\C-xf" 'find-function)
+
+(global-set-key (kbd "C-x C-r") 'ts-find-alternative-file-with-sudo)
 
