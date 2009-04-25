@@ -30,6 +30,11 @@
 ;; Key mappings
 ;; ============================
 
+(setq ctl-ç-map (make-sparse-keymap))
+(defalias 'ctl-ç-prefix ctl-ç-map)
+(global-set-key (kbd "C-ç") 'ctl-ç-prefix)
+(define-key ctl-ç-map "(" 'ts-corr-paren)
+
 ;; use F1 key to go to a man page
 (global-set-key [f1] 'man)
 ;; use F3 key to kill current buffer
@@ -133,8 +138,8 @@
 ;; (add-hook 'text-mode-hook 'longlines-mode)
 
 ;; replace auto-fill by longlines-mode in logjam
-(add-hook 'lj-mode-hook 'turn-off-auto-fill)
-(add-hook 'lj-compose-header-mode-hook 'longlines-mode)
+(add-hook 'lj-compose-common-hook 'turn-off-auto-fill nil t)
+(add-hook 'lj-compose-common-hook 'longlines-mode nil t)
 
 ;; ==============================
 ;; TeX / LaTeX / AucTeX
@@ -175,6 +180,7 @@
 
 (load-library "tiago")
 (load-library "tresor")
+(load-library "alunos")
 (require 'ljupdate)
 (require 'tc)
 
