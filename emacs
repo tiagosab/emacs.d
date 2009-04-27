@@ -87,6 +87,9 @@
 ;; no scroll bar
 (scroll-bar-mode -1)
 
+;; no fringes
+(fringe-mode -1)
+
 ;; ===========================
 ;; Hooks
 ;; ===========================
@@ -105,7 +108,7 @@
 ;; TeX / LaTeX / AucTeX
 ;; ==============================
 
-(setq TeX-global-PDF-mode t)
+; (TeX-global-PDF-mode t)
 
 ;; ==============================
 ;; Mail
@@ -140,7 +143,10 @@
 
 (load-library "tiago")
 (load-library "tresor")
+
 (load-library "alunos")
+(setq alunos-dir "~/home/aulasfran/alunos/")
+
 (require 'ljupdate)
 (require 'tc)
 
@@ -170,6 +176,8 @@
 (defalias 'ctl-ç-prefix ctl-ç-map)
 (global-set-key (kbd "C-ç") 'ctl-ç-prefix)
 (define-key ctl-ç-map "(" 'ts-corr-paren)
+(define-key ctl-ç-map "[" 'ts-corr-brack)
+(define-key ctl-ç-map "{" 'ts-corr-curl)
 
 ;; use F1 key to go to a man page
 (global-set-key [f1] 'man)
