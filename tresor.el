@@ -23,7 +23,7 @@
 (defgroup tresor nil "Dictionnaire Trésor de la Langue Française"
   :group 'applications)
 
-(defcustom trs-switch-to-buffer pop-to-buffer
+(defcustom trs-switch-to-buffer 'pop-to-buffer
   "Function to use to switch to tresor buffer"
   :type 'function
   :group 'tresor)
