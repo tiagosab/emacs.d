@@ -13,11 +13,18 @@
  ;; along with this program; if not, write to the Free Software
  ;; Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+;; Needs derobeur.py version 0.2
+
 ;;; Robert
 (require 'button)
 
 (defgroup robert nil "Dictionnaire - Le Grand Robert"
   :group 'applications)
+
+(defcustom rob-switch-to-buffer 'pop-to-buffer
+  "Function to use to switch to tresor buffer"
+  :type 'function
+  :group 'tresor)
 
 (defcustom robert-entry-face 'font-lock-function-name-face
   "The face to use to highlight the current entry <s>"
@@ -39,7 +46,7 @@
   :type 'face
   :group 'robert)
 
-(defcustom robert-author-face 'font-lock-preprocessor-face
+(defcustom robert-author-face 'font-latex-sectioning-2-face
   "The face to use to highlight <a>"
   :type 'face
   :group 'robert)
@@ -135,14 +142,15 @@ h / ? - display this help
     (remove-hook 'text-mode-hook 'turn-on-auto-fill t)
     (beginning-of-buffer)
     (rob-parse-subtree robert-contents-categories-faces)
-    (make-local-variable 'fill-nobreak-invisible)
-    (setq fill-nobreak-invisible t)
+;    (make-local-variable 'fill-nobreak-invisible)
+;    (setq fill-nobreak-invisible t)
     (set (make-local-variable 'fill-nobreak-predicate) 
          (cons 'fill-french-nobreak-p fill-nobreak-predicate))
     (set (make-local-variable 'paragraph-start)
-         ".")
-    (set (make-local-variable 'paragraph-separate)
-         "--- This regexp must never match ---")
+    ;;     "Never-matching regexp.")
+         " ") ; I do not understand why I need this space here.
+;;    (set (make-local-variable 'paragraph-separate)
+;;         "--- This regexp must never match ---")
 ;    (use-hard-newlines t)
     (set (make-local-variable 'adaptive-fill-mode) t)
     ;(fill-region (point-min) (point-max))
@@ -155,8 +163,9 @@ h / ? - display this help
 (defun rob-parse-citation(beg end cat)
   (save-excursion
     (goto-char beg)
+    (insert "      ")
     (while (re-search-forward "\n[ \t]*" end t)
-      ;(message "matched")
+      (message "matched")
       (replace-match "\n      ")))
   (let ((overlay (make-overlay beg end)))
     (overlay-put overlay 'face robert-citation-face)
@@ -179,18 +188,24 @@ h / ? - display this help
 ;;   (rob-parse-subtree robert-contents-categories-faces)
 ;; )
 
+(defun rob-only-parse ()
+  (interactive)
+  (beginning-of-buffer)
+  (rob-parse-subtree robert-contents-categories-faces))
+
 (defun rob-parse-subtree (categories-faces)
   (let (subitems) ; list of (beginning tag-open (category-face)) lists
     (while
-        (search-forward-regexp "<.*?>"
+        (search-forward-regexp "<\\(/\\)?.*?>"
                                nil ; not bound
-                               "tolimit" ; if fail, move to limit (no error)
-                               );)
+                               t ; if fail, move to limit (no error)
+                               )
       (let ((data (match-string 0)))
         (delete-region (match-beginning 0) (match-end 0))
         (let ((current (car subitems)))
           (let ((beg (car current))
-                (tag-open (car (cdr current)))
+                (tag-open (or (car (cdr current))
+                              ""))
                 (cat-face (car (cdr (cdr current)))))
             (when (car cat-face)
               (if (functionp (nth 1 cat-face))
@@ -202,18 +217,22 @@ h / ? - display this help
               (when (nth 3 cat-face)
                 (insert (nth 3 cat-face))))
             (setq subitems (cdr subitems))
-            (let ((item)
-                  (counter 0))
-              (while (not item)
-                (let ((cat-face (nth counter categories-faces)))
-                  (if (nth 0 cat-face)
-                      (if (string-match (nth 0 cat-face) data)
-                          (setq item cat-face)
-                        (setq counter (+ 1 counter)))
-                    (setq item '(nil nil)))))
-              (if (nth 2 item)
-                  (insert (nth 2 item)))
-              (setq subitems (cons (list (point-marker) data item) subitems))
+            (if (not (match-string 1))
+                (let ((item)
+                      (counter 0))
+;                  (message "aqui")
+                  (while (not item)
+                    (let ((cat-face (nth counter categories-faces)))
+                      (if (nth 0 cat-face)
+                          (if (string-match (nth 0 cat-face) data)
+                              (setq item cat-face)
+                            (setq counter (+ 1 counter)))
+                        (setq item '(nil nil)))))
+                  (if (nth 2 item)
+                      (insert (nth 2 item)))
+                  (setq subitems (cons (list (point-marker) data item) subitems))
+                  )
+              (message (match-string 1))
               )
             ))))))
 
@@ -253,7 +272,7 @@ This guess is based on the text surrounding the cursor."
       (erase-buffer)
       (kill-all-local-variables)
       (call-process "derobeur.py" nil t nil word)
-      (pop-to-buffer tr-buffer))
+      (funcall rob-switch-to-buffer tr-buffer))
 ;;))
     (robert-mode)))
 
