@@ -23,6 +23,11 @@
 (defgroup tresor nil "Dictionnaire Trésor de la Langue Française"
   :group 'applications)
 
+(defcustom trs-switch-to-buffer pop-to-buffer
+  "Function to use to switch to tresor buffer"
+  :type 'function
+  :group 'tresor)
+
 (defcustom tresor-entry-face 'font-lock-function-name-face
   "The face to use to highlight the current entry"
   :type 'face
@@ -284,7 +289,8 @@ This guess is based on the text surrounding the cursor."
                      (coding-system-from-name charset-name)
                      default-buffer-file-coding-system)
           )
-    (pop-to-buffer tr-buffer)
+    (funcall trs-switch-to-buffer tr-buffer)
+    (beginning-of-buffer)
     (tresor-mode)))
 
 (defun tresor (word)
