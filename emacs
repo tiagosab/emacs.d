@@ -90,6 +90,9 @@
 ;; no fringes
 (fringe-mode -1)
 
+;; do not use separate frame for woman
+(setq woman-use-own-frame nil)
+
 ;; ===========================
 ;; Hooks
 ;; ===========================
@@ -142,7 +145,12 @@
 (add-to-list 'load-path "~/lib/emacs/ljupdate-read-only/")
 
 (load-library "tiago")
+
 (load-library "tresor")
+(setq trs-switch-to-buffer 'display-buffer)
+
+(load-library "robert")
+(setq rob-switch-to-buffer 'display-buffer)
 
 (load-library "alunos")
 (setq alunos-dir "~/home/aulasfran/alunos/")
