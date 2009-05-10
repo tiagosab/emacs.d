@@ -93,6 +93,9 @@
 ;; do not use separate frame for woman
 (setq woman-use-own-frame nil)
 
+;; never never open a separate file dialog
+(setq use-file-dialog nil)
+
 ;; ===========================
 ;; Hooks
 ;; ===========================
@@ -133,6 +136,10 @@
 (setq smtpmail-smtp-service 25)
 (setq smtpmail-auth-credentials '(("smtp.gmail.com" 25 "tiagosaboga@gmail.com" "rvdc25")))
 (setq smtpmail-starttls-credentials '(("smtp.gmail.com" 25 nil nil)))
+
+; nmh
+
+(setq mh-recursive-folders-flag t)
 
 ;; ===========================
 ;; Load stuff
