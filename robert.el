@@ -369,7 +369,10 @@ visible; else, text will be invisible."
         (let (value
               (overlay (car overlays)))
           (if (equal (overlay-get overlay 'cat)
-                     (car types))
+                     (car types)) ; We're looking only at the first
+                                  ; element of the list.
+                                  ; TODO: correct this, here and on
+                                  ; tresor.el
               (progn
                 (if invisible
                     (if (> 0 invisible)
