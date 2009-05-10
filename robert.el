@@ -21,10 +21,15 @@
 (defgroup robert nil "Dictionnaire - Le Grand Robert"
   :group 'applications)
 
+(defcustom derobeur-command "derobeur.py"
+  "The command to use to run derobeur."
+  :type '(string)
+  :group 'robert)
+
 (defcustom rob-switch-to-buffer 'pop-to-buffer
-  "Function to use to switch to tresor buffer"
+  "The function to use to switch to tresor buffer"
   :type 'function
-  :group 'tresor)
+  :group 'robert)
 
 (defcustom robert-entry-face 'font-lock-function-name-face
   "The face to use to highlight the current entry <s>"
@@ -163,8 +168,10 @@ h / ? - display this help
 
 (defun rob-parse-citation(beg end cat)
   (save-excursion
-    (let ((end (progn (re-search-forward "<a>")
-                     (match-beginning 0))))
+    (let ((end (or (let ((end-marker (make-marker)))
+                     (re-search-forward "<a>" nil t)
+                     (set-marker end-marker (match-beginning 0)))
+                   end)))
       (goto-char beg)
       (if (looking-back "[\n \t]*")
           (delete-region (match-beginning 0) (match-end 0)))
@@ -283,7 +290,7 @@ This guess is based on the text surrounding the cursor."
       (auto-fill-mode nil)
       (erase-buffer)
       (kill-all-local-variables)
-      (call-process "derobeur.py" nil t nil word)
+      (call-process derobeur-command nil t nil word)
       (funcall rob-switch-to-buffer tr-buffer))
 ;;))
     (robert-mode)))
