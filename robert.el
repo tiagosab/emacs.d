@@ -86,17 +86,17 @@
     (define-key map 
       (kbd "RET") 'robert)
     (define-key map 
-      (kbd "e") 'trs-toggle-exemples)
+      (kbd "e") 'rob-toggle-exemples)
     (define-key map
-      (kbd "d") 'trs-toggle-definitions)
+      (kbd "d") 'rob-toggle-definitions)
     (define-key map
-      (kbd "s") 'trs-toggle-syntagmes)
+      (kbd "s") 'rob-toggle-syntagmes)
     (define-key map
-      (kbd "o") 'trs-toggle-others)
+      (kbd "o") 'rob-toggle-others)
     (define-key map
-      (kbd "t") 'trs-all-visible)
+      (kbd "t") 'rob-all-visible)
     (define-key map
-      (kbd "m") 'trs-toggle-minimal)
+      (kbd "m") 'rob-toggle-minimal)
     (define-key map
       (kbd "q") 'bury-buffer)
     (define-key map
@@ -320,7 +320,7 @@ This guess is based on the text surrounding the cursor."
 
 (defun rob-toggle-exemples ()
   (interactive)
-  (rob-toggle-by-type '("tlf_cexemple")))
+  (rob-toggle-by-type '("<e>" "<a>")))
 
 (defun rob-toggle-definitions ()
   (interactive)
