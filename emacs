@@ -16,7 +16,6 @@
  '(jde-jdk-registry (quote (("1.5" . "/usr/lib/jvm/java-1.5.0-sun-1.5.0.11"))))
  '(large-file-warning-threshold 20000000)
  '(load-home-init-file t t)
- '(scroll-margin 5)
  '(tab-width 4)
  '(wdired-enable t))
 (custom-set-faces
@@ -96,6 +95,11 @@
 ;; never never open a separate file dialog
 (setq use-file-dialog nil)
 
+;; number of lines of margin at the top and bottom of a window.
+;; recenter the window whenever point gets within this many lines of
+;; the top or bottom of the window.
+(setq scroll-margin 0)
+
 ;; ===========================
 ;; Hooks
 ;; ===========================
@@ -141,6 +145,17 @@
 
 (setq mh-recursive-folders-flag t)
 
+;; ==============================
+;; Jabber
+;; ==============================
+
+(setq jabber-account-list '(
+                            ("tiagosaboga@gmail.com" 
+                             (:network-server . "talk.google.com")
+                             (:port . 443)
+                             (:connection-type . ssl))
+                            ))
+
 ;; ===========================
 ;; Load stuff
 ;; ===========================
@@ -161,6 +176,10 @@
 
 (load-library "alunos")
 (setq alunos-dir "~/home/aulasfran/alunos/")
+
+(add-to-list 'load-path "~/src/third-party/emacs-ditz/")
+(require 'ditz)
+
 
 (require 'ljupdate)
 (require 'tc)
