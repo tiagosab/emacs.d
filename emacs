@@ -125,7 +125,7 @@
 ;; ==============================
 
 ; The default send-mail-function , sendmail-send-it, uses local
-; sendmail (which would be could, since I have esmtp configured
+; sendmail (which would be fine, since I have esmtp configured
 ; locally), but it provides no way to add custom options to sendmail
 ; (which I need, since my conf file is not in the normal place. So, I
 ; have to use the internal smtp handler.
@@ -144,6 +144,22 @@
 ; nmh
 
 (setq mh-recursive-folders-flag t)
+
+;; ==============================
+;; BBdb
+;; ==============================
+
+(require 'bbdb)
+(bbdb-initialize 'gnus 'message 'w3)
+(setq bbdb-north-american-phone-numbers-p nil)
+(setq bbdb-legal-zip-codes '("^$"
+                             "^[ 	\n]*[0-9][0-9]?[0-9]?[0-9]?[0-9]?[0-9]?[ 	\n]*$"
+                             "^[ 	\n]*\\([0-9][0-9][0-9][0-9][0-9][0-9]?\\)[ 	\n]*-?[ 	\n]*\\([0-9][0-9][0-9][0-9]?\\)[ 	\n]*$"
+                             "^[ 	\n]*\\([A-Za-z0-9]+\\)[ 	\n]+\\([A-Za-z0-9]+\\)[ 	\n]*$"
+                             "^[ 	\n]*\\([A-Z]+\\)[ 	\n]*-?[ 	\n]*\\([0-9]+ ?[A-Z]*\\)[ 	\n]*$"
+                             "^[ 	\n]*\\([A-Z]+\\)[ 	\n]*-?[ 	\n]*\\([0-9]+\\)[ 	\n]+\\([0-9]+\\)[ 	\n]*$")
+;; (add-hook 'gnus-startup-hook 'bbdb-insinuate-gnus)
+;; (bbdb-insinuate-message)
 
 ;; ==============================
 ;; Jabber
