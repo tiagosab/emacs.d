@@ -3,27 +3,11 @@
 (setq user-full-name "Tiago Saboga")
 (setq user-mail-address "tiagosaboga@gmail.com")
 
-(custom-set-variables
-  ;; custom-set-variables was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
- '(ecb-options-version "2.32")
- '(home-end-enable t)
- '(ibuffer-enable t)
- '(ibuffer-saved-filter-groups (quote (("ts-basic" ("lisp" (mode . lisp-mode)) ("omegat" (filename . ".*megat.*")) ("Internal" (name . "\\*.*"))))))
- '(ibuffer-saved-filters (quote (("gnus" ((or (mode . message-mode) (mode . mail-mode) (mode . gnus-group-mode) (mode . gnus-summary-mode) (mode . gnus-article-mode)))) ("programming" ((or (mode . emacs-lisp-mode) (mode . cperl-mode) (mode . c-mode) (mode . java-mode) (mode . idl-mode) (mode . lisp-mode)))))))
- '(jde-jdk-registry (quote (("1.5" . "/usr/lib/jvm/java-1.5.0-sun-1.5.0.11"))))
- '(large-file-warning-threshold 20000000)
- '(load-home-init-file t t)
- '(tab-width 4)
- '(wdired-enable t))
-(custom-set-faces
-  ;; custom-set-faces was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
- )
+;; converted from customize
+(setq large-file-warning-threshold 20000000
+      load-home-init-file t
+      tab-width 4
+      wdired-enable t)
 
 ;; ===========================
 ;; Appearance
@@ -46,6 +30,11 @@
 ;; ===========================
 ;; Behaviour
 ;; ===========================
+
+;(setq dired-listing-switches "-al --time-style=\"+%b %d %y\"")
+
+; allow scrolling commands during incremental search
+(setq isearch-allow-scroll t)
 
 ;; alias y to yes and n to no
 (defalias 'yes-or-no-p 'y-or-n-p)
@@ -114,6 +103,62 @@
 (add-hook 'lj-compose-common-hook 'turn-off-auto-fill nil t)
 (add-hook 'lj-compose-common-hook 'longlines-mode nil t)
 
+;;
+;; ==============================
+;; Ibuffer
+;; ==============================
+
+(global-set-key (kbd "C-x C-b") 'ibuffer)
+
+(setq ibuffer-show-empty-filter-groups nil)
+
+(setq ibuffer-saved-filter-groups
+  (quote
+   (("default"
+     ("dired" (mode . dired-mode))
+     ("gnus" (or
+              (mode . message-mode)
+              (mode . bbdb-mode)
+              (mode . mail-mode)
+              (mode . gnus-group-mode)
+              (mode . gnus-summary-mode)
+              (mode . gnus-article-mode)
+              (name . "^\\.bbdb$")
+              (name . "^\\.newsrc-dribble")
+              (name . "sent")
+              ))
+     ("python" (mode . python-mode))
+     ("shell" (mode . shell-script-mode))
+     ("lisp" (or
+              (mode . emacs-lisp-mode)
+              (mode . lisp-mode)
+              (name . "^\\*scratch\\*$")
+              (name . "^\\*Messages\\*$")
+              (name . ".emacs")
+              (name . "^.*\\.el.*$")
+              ))
+     ("man"  (or
+              (mode . Man-mode)
+              (name . "^\\*info\\*$")
+              (mode . woman-mode)
+              ))
+     ("tex" (or
+             (name . ".aux")
+             (name . ".tex")
+             (name . ".texi")
+             (name . ".log")
+             (name . ".output")
+             (mode . tex-mode)
+             (mode . latex-mode)
+             ))
+     ("internal" (name . "^\\*.*\\*$"))
+     ))))
+
+(add-hook 'ibuffer-mode-hook
+          (lambda ()
+            (ibuffer-switch-to-saved-filter-groups "default")))
+
+
 ;; ==============================
 ;; TeX / LaTeX / AucTeX
 ;; ==============================
@@ -135,6 +180,8 @@
 (setq mail-user-agent 'message-user-agent)
 (setq message-send-mail-function 'smtpmail-send-it)
 
+(setq message-directory "~/Gnumail/")
+
 ; configure smtp to use gmail.
 (setq smtpmail-smtp-server "smtp.gmail.com")
 (setq smtpmail-smtp-service 25)
@@ -150,14 +197,14 @@
 ;; ==============================
 
 (require 'bbdb)
-(bbdb-initialize 'gnus 'message 'w3)
+(bbdb-initialize 'gnus 'message) ; 'w3)
 (setq bbdb-north-american-phone-numbers-p nil)
 (setq bbdb-legal-zip-codes '("^$"
                              "^[ 	\n]*[0-9][0-9]?[0-9]?[0-9]?[0-9]?[0-9]?[ 	\n]*$"
                              "^[ 	\n]*\\([0-9][0-9][0-9][0-9][0-9][0-9]?\\)[ 	\n]*-?[ 	\n]*\\([0-9][0-9][0-9][0-9]?\\)[ 	\n]*$"
                              "^[ 	\n]*\\([A-Za-z0-9]+\\)[ 	\n]+\\([A-Za-z0-9]+\\)[ 	\n]*$"
                              "^[ 	\n]*\\([A-Z]+\\)[ 	\n]*-?[ 	\n]*\\([0-9]+ ?[A-Z]*\\)[ 	\n]*$"
-                             "^[ 	\n]*\\([A-Z]+\\)[ 	\n]*-?[ 	\n]*\\([0-9]+\\)[ 	\n]+\\([0-9]+\\)[ 	\n]*$")
+                             "^[ 	\n]*\\([A-Z]+\\)[ 	\n]*-?[ 	\n]*\\([0-9]+\\)[ 	\n]+\\([0-9]+\\)[ 	\n]*$"))
 ;; (add-hook 'gnus-startup-hook 'bbdb-insinuate-gnus)
 ;; (bbdb-insinuate-message)
 
