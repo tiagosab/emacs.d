@@ -241,10 +241,7 @@
 (setq message-directory "~/Gnumail/")
 
 ; configure smtp to use gmail.
-(setq smtpmail-smtp-server "smtp.gmail.com")
-(setq smtpmail-smtp-service 25)
-(setq smtpmail-auth-credentials '(("smtp.gmail.com" 25 "tiagosaboga@gmail.com" "rvdc25")))
-(setq smtpmail-starttls-credentials '(("smtp.gmail.com" 25 nil nil)))
+(load-file "/home/tiago/etc/sensible-data/emacs-gmail.el")
 
 ; nmh
 (setq mh-recursive-folders-flag t)
