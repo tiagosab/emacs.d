@@ -16,19 +16,13 @@
 ;; Show column number at bottom of screen
 (column-number-mode 1)
 
-;; no menu
+;; no menu, no toolbar, no scrollbar, no fringes
 (menu-bar-mode -1)
-
-;; turn off the toolbar
 (tool-bar-mode -1)
-
-;; no scroll bar
 (scroll-bar-mode -1)
-
-;; no fringes
 (fringe-mode -1)
 
-;; black background
+;; black background - moved to Xresources/Xdefaults
 
 ;; format the title-bar to always include the buffer name
 (setq frame-title-format "emacs - %b")
