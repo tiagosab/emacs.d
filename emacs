@@ -3,15 +3,12 @@
 (setq user-full-name "Tiago Saboga")
 (setq user-mail-address "tiagosaboga@gmail.com")
 
-;; converted from customize
-(setq large-file-warning-threshold 20000000
-      load-home-init-file t
-      tab-width 4
-      wdired-enable t)
+;; ===========================
+;; General interface settings
+;; ===========================
 
-;; ===========================
-;; Appearance
-;; ===========================
+(when (fboundp 'blink-cursor-mode)
+  (blink-cursor-mode -1))
 
 ;; display the current time
 (display-time)
@@ -19,25 +16,61 @@
 ;; Show column number at bottom of screen
 (column-number-mode 1)
 
-;; highlight matches from searches
-(setq isearch-highlight t)
-(setq search-highlight t)
-(setq-default transient-mark-mode t)
+;; no menu
+(menu-bar-mode -1)
 
-(when (fboundp 'blink-cursor-mode)
-  (blink-cursor-mode -1))
+;; turn off the toolbar
+(tool-bar-mode -1)
 
-;; ===========================
-;; Behaviour
-;; ===========================
+;; no scroll bar
+(scroll-bar-mode -1)
 
-;(setq dired-listing-switches "-al --time-style=\"+%b %d %y\"")
+;; no fringes
+(fringe-mode -1)
 
-; allow scrolling commands during incremental search
-(setq isearch-allow-scroll t)
+;; black background
+
+;; format the title-bar to always include the buffer name
+(setq frame-title-format "emacs - %b")
 
 ;; alias y to yes and n to no
 (defalias 'yes-or-no-p 'y-or-n-p)
+
+;; add support for recent files list
+;; recentf stuff
+(require 'recentf)
+(recentf-mode 1)
+(setq recentf-max-menu-items 25)
+(global-set-key "\C-x\ \C-r" 'recentf-open-files)
+
+;;; Emacs Load Path
+;;(setq load-path (cons "~/lib/emacs" load-path))
+(add-to-list 'load-path "~/lib/emacs")
+(add-to-list 'load-path "~/lib/emacs/http")
+(add-to-list 'load-path "~/lib/emacs/ljupdate-read-only/")
+
+; load my general-purpose library
+(load-library "tiago")
+(global-set-key (kbd "C-x g") 'ts-gnus)
+
+;; ==============================
+;; Basic editor settings
+;; ==============================
+
+(setq large-file-warning-threshold 20000000
+      tab-width 4)
+
+;; Visual feedback of mark
+(global-set-key (kbd "C-x C-b") 'ibuffer)
+(setq-default transient-mark-mode t)
+
+;; never never open a separate file dialog
+(setq use-file-dialog nil)
+
+;; number of lines of margin at the top and bottom of a window.
+;; recenter the window whenever point gets within this many lines of
+;; the top or bottom of the window.
+(setq scroll-margin 0)
 
 ;; Enable syntax highlighting
 (global-font-lock-mode t)
@@ -63,34 +96,64 @@
 (setq scroll-step 1)
 (setq scroll-conservatively 8)
 
-;; format the title-bar to always include the buffer name
-(setq frame-title-format "emacs - %b")
+;; ==============================
+;; Minor mode config
+;; ==============================
 
-;; no menu
-(menu-bar-mode -1)
+;; highlight matches from searches
+(setq isearch-highlight t)
+(setq search-highlight t)
 
-;; turn off the toolbar
-(tool-bar-mode -1)
+; allow scrolling commands during incremental search
+(setq isearch-allow-scroll t)
 
-;; no scroll bar
-(scroll-bar-mode -1)
-
-;; no fringes
-(fringe-mode -1)
+;; ==============================
+;; Major modes config
+;; ==============================
 
 ;; do not use separate frame for woman
 (setq woman-use-own-frame nil)
 
-;; never never open a separate file dialog
-(setq use-file-dialog nil)
+;(setq dired-listing-switches "-al --time-style=\"+%b %d %y\"")
 
-;; number of lines of margin at the top and bottom of a window.
-;; recenter the window whenever point gets within this many lines of
-;; the top or bottom of the window.
-(setq scroll-margin 0)
+;; replace auto-fill by longlines-mode in logjam
+(add-hook 'lj-compose-common-hook 'turn-off-auto-fill nil t)
+(add-hook 'lj-compose-common-hook 'longlines-mode nil t)
+
+;;; My modes
+(load-library "alunos")
+(setq alunos-dir "~/home/aulasfran/alunos/")
+
+(load-library "tresor")
+(setq trs-switch-to-buffer 'display-buffer)
+
+(load-library "robert")
+(setq rob-switch-to-buffer 'display-buffer)
+
+(add-to-list 'load-path "~/src/third-party/emacs-ditz/")
+(require 'ditz)
+
+(require 'ljupdate)
+(require 'tc)
+
+;;; load debian copyright mode
+;; (load "/home/tiago/.emacs.d/debian-mr-copyright-mode.el")
+;; (load "debian-mr-copyright-mode")
+(autoload 'debian-mr-copyright-mode "debian-mr-copyright-mode"
+  "Major mode for editing machine-readable copyright files (i.e. debian/copyright)."
+  t)
 
 ;; ===========================
-;; Hooks
+;; Dired
+;; ===========================
+
+;(require 'gnus-dired) ;, isn't needed due to autoload cookies
+(add-hook 'dired-mode-hook 'turn-on-gnus-dired-mode)
+
+(setq wdired-enable t)
+
+;; ===========================
+;; Text mode
 ;; ===========================
 
 ;; turn on word wrapping in text mode
@@ -99,11 +162,6 @@
 ;; turn on longlines-mode in text mode
 ;; (add-hook 'text-mode-hook 'longlines-mode)
 
-;; replace auto-fill by longlines-mode in logjam
-(add-hook 'lj-compose-common-hook 'turn-off-auto-fill nil t)
-(add-hook 'lj-compose-common-hook 'longlines-mode nil t)
-
-;;
 ;; ==============================
 ;; Ibuffer
 ;; ==============================
@@ -189,7 +247,6 @@
 (setq smtpmail-starttls-credentials '(("smtp.gmail.com" 25 nil nil)))
 
 ; nmh
-
 (setq mh-recursive-folders-flag t)
 
 ;; ==============================
@@ -213,60 +270,19 @@
 ;; ==============================
 
 (setq jabber-account-list '(
-                            ("tiagosaboga@gmail.com" 
+                            ("tiagosaboga@gmail.com"
                              (:network-server . "talk.google.com")
                              (:port . 443)
-                             (:connection-type . ssl))
-                            ))
+                             (:connection-type . ssl))))
 
 ;; ===========================
 ;; Load stuff
 ;; ===========================
 
-;;; Emacs Load Path
-;;(setq load-path (cons "~/lib/emacs" load-path))
-(add-to-list 'load-path "~/lib/emacs")
-(add-to-list 'load-path "~/lib/emacs/http")
-(add-to-list 'load-path "~/lib/emacs/ljupdate-read-only/")
-
-(load-library "tiago")
-
-(load-library "tresor")
-(setq trs-switch-to-buffer 'display-buffer)
-
-(load-library "robert")
-(setq rob-switch-to-buffer 'display-buffer)
-
-(load-library "alunos")
-(setq alunos-dir "~/home/aulasfran/alunos/")
-
-(add-to-list 'load-path "~/src/third-party/emacs-ditz/")
-(require 'ditz)
-
-
-(require 'ljupdate)
-(require 'tc)
-
-;;; load debian copyright mode
-;; (load "/home/tiago/.emacs.d/debian-mr-copyright-mode.el")
-;; (load "debian-mr-copyright-mode")
-(autoload 'debian-mr-copyright-mode "debian-mr-copyright-mode"
-  "Major mode for editing machine-readable copyright files (i.e. debian/copyright)."
-  t)
-
-(autoload 'tr-get-page "tresor" "Chercher une définition dans le trésor" t)
-
-;; add support for recent files list
-;; recentf stuff
-;(require 'recentf)
-;(recentf-mode 1)
-;(setq recentf-max-menu-items 25)
-;(global-set-key "\C-x\ \C-r" 'recentf-open-files)
-
 (put 'erase-buffer 'disabled nil)
 
 ;; ============================
-;; Key mappings
+;; More Key mappings (others keys are mapped above).
 ;; ============================
 
 (setq ctl-ç-map (make-sparse-keymap))
@@ -287,9 +303,10 @@
 
 ;; goto line function C-c C-g
 (global-set-key [ (control c) (control g) ] 'goto-line)
-
 (global-set-key [ (meta /) ] 'hippie-expand)
 
+;; I kept changing C-x C-d and C-x d (list-directory). Now they are
+;; the same: why use list-directory if you have dired?.
 (global-set-key [ (control x) (control d) ] 'dired)
 
 ;; easy commenting out of lines
@@ -298,5 +315,4 @@
 
 (global-set-key "\C-xf" 'find-function)
 
-(global-set-key (kbd "C-x C-r") 'ts-find-alternative-file-with-sudo)
-
+(global-set-key (kbd "A-x A-r") 'ts-find-alternative-file-with-sudo)
