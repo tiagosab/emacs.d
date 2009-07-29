@@ -164,6 +164,22 @@
 ;(require 'gnus-dired) ;, isn't needed due to autoload cookies
 (add-hook 'dired-mode-hook 'turn-on-gnus-dired-mode)
 
+; Define key (V) in dired to view file in other window.
+;
+; I just redefine the view-file function to point to
+; view-file-other-window, and back again. Is this any better (or worse
+; then redefining dired-view-file anew? I've done that in tiago.el,
+; but the current approach involves less repetition, and at least has
+; served to learn how to use fset/symbol-function.
+(define-key dired-mode-map "V"
+  (lambda ()
+    (interactive)
+    (let (old)
+      (fset 'old (symbol-function 'view-file))
+      (fset 'view-file (symbol-function 'view-file-other-window))
+      (dired-view-file)
+      (fset 'view-file (symbol-function 'old)))))
+
 (setq wdired-enable t)
 
 ;; ===========================
