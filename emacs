@@ -47,6 +47,26 @@
 (load-library "tiago")
 (global-set-key (kbd "C-x g") 'ts-gnus)
 
+; make scripts executable when saving
+(add-hook 'after-save-hook
+          '(lambda ()
+             (progn
+               (and (save-excursion
+                      (save-restriction
+                        (widen)
+                        (goto-char (point-min))
+                        (save-match-data
+                          (looking-at "^#!"))))
+;                    (shell-command (concat "chmod u+x " buffer-file-name))
+                    (let ((mode (file-modes buffer-file-name)))
+                      (chmod buffer-file-name
+                             (logior mode 64))) ; add executable bit
+                    (message (concat "Saved as script: " buffer-file-name))
+                    ))))
+
+(setq find-function-C-source-directory
+      "/usr/local/src/debian-packages/emacs-snapshot-20090725/src")
+
 ;; ==============================
 ;; Basic editor settings
 ;; ==============================
@@ -164,6 +184,9 @@
 
 (setq ibuffer-show-empty-filter-groups nil)
 
+;; reverse the default sorting order
+;(setq ibuffer-default-sorting-reversep nil)
+
 (setq ibuffer-saved-filter-groups
   (quote
    (("default"
@@ -195,21 +218,33 @@
               (mode . woman-mode)
               ))
      ("tex" (or
-             (name . ".aux")
-             (name . ".tex")
-             (name . ".texi")
-             (name . ".log")
-             (name . ".output")
+             (name . "\.aux$")
+             (name . "\.tex$")
+             (name . "\.texi$")
+             (name . "\.log$")
+             (name . "\.output$")
              (mode . tex-mode)
              (mode . latex-mode)
              ))
      ("internal" (name . "^\\*.*\\*$"))
      ))))
 
+
+;; Hide gnus group
+(add-hook 'ibuffer-mode-hook
+          (lambda ()
+            (dolist (grp '("gnus" "lisp" "man" "internal" "dired"))
+              (setq ibuffer-hidden-filter-groups
+                    (cons grp ibuffer-hidden-filter-groups)))))
+
+;; load default groups (set above).
+;; must run before previous hook, so it must be added later.
 (add-hook 'ibuffer-mode-hook
           (lambda ()
             (ibuffer-switch-to-saved-filter-groups "default")))
 
+;; run this when fiddling with ibuffer hooks
+;;(setq ibuffer-mode-hook nil)
 
 ;; ==============================
 ;; TeX / LaTeX / AucTeX
@@ -282,6 +317,16 @@
 (define-key ctl-ç-map "(" 'ts-corr-paren)
 (define-key ctl-ç-map "[" 'ts-corr-brack)
 (define-key ctl-ç-map "{" 'ts-corr-curl)
+
+; quick help on help
+(define-key help-map "h"
+  (lambda ()
+    (interactive)
+    (message
+     (concat "a commands; b bindings; c key command; "
+             "f function; F command manual; i info;\n"
+             "k key command docs; K key command manual; "
+             "l lossage; m mode docs; p packages; r emacs manual"))))
 
 ;; use F1 key to go to a man page
 (global-set-key [f1] 'man)
