@@ -64,8 +64,17 @@
                     (message (concat "Saved as script: " buffer-file-name))
                     ))))
 
+; where should emacs find its C source file
 (setq find-function-C-source-directory
       "/usr/local/src/debian-packages/emacs-snapshot-20090725/src")
+
+; work around bug: when activating menu-bar in a tiling wm, minibuffer
+; is no longer visible; does not work.
+(add-hook 'menu-bar-mode-on-hook
+          (lambda ()
+            (set-frame-height nil 35)))
+
+;(setq menu-bar-mode-on-hook nil)
 
 ;; ==============================
 ;; Basic editor settings
@@ -163,6 +172,9 @@
 
 ;(require 'gnus-dired) ;, isn't needed due to autoload cookies
 (add-hook 'dired-mode-hook 'turn-on-gnus-dired-mode)
+
+; If we are to change dired-mode-map, we must:
+(require 'dired)
 
 ; Define key (V) in dired to view file in other window.
 ;
@@ -316,6 +328,40 @@
                              (:network-server . "talk.google.com")
                              (:port . 443)
                              (:connection-type . ssl))))
+
+;; ==============================
+;; Emms / mpd
+;; ==============================
+
+; emms basic config
+
+; emms-setup provides four functions for automatic setup of emms.
+(require 'emms-setup)
+;(emms-minimalistic)
+; (emms-standard) ; use the standard default config
+(emms-all) ; use all stable features
+;(emms-devel)
+
+;; setup default players
+(emms-default-players)
+
+;; choose function used to find files; the info manual says simply
+;; that the -find function is faster and should be used if gnu find is
+;; present.
+(setq emms-source-file-directory-tree-function
+      'emms-source-file-directory-tree-find)
+
+;; where are my music files
+(setq emms-source-file-default-directory
+      "/extra/multimedia/musica/")
+
+; from http://dryice.name/blog/emacs/playing-media-files-within-emacs/
+(require 'emms-player-mpd)
+(setq emms-player-mpd-server-name "localhost")
+(setq emms-player-mpd-server-port "6600")
+(add-to-list 'emms-info-functions 'emms-info-mpd)
+(add-to-list 'emms-player-list 'emms-player-mpd)
+(setq emms-player-mpd-music-directory "/extra/multimedia/musica/")
 
 ;; ===========================
 ;; Load stuff
