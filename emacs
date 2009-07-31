@@ -61,8 +61,7 @@
                     (let ((mode (file-modes buffer-file-name)))
                       (chmod buffer-file-name
                              (logior mode 64))) ; add executable bit
-                    (message (concat "Saved as script: " buffer-file-name))
-                    ))))
+                    (message (concat "Saved as script: " buffer-file-name))))))
 
 ; where should emacs find its C source file
 (setq find-function-C-source-directory
@@ -158,6 +157,7 @@
 
 (require 'ljupdate)
 (require 'tc)
+(require 'stumpwm-mode)
 
 ;;; load debian copyright mode
 ;; (load "/home/tiago/.emacs.d/debian-mr-copyright-mode.el")
@@ -191,6 +191,9 @@
       (fset 'view-file (symbol-function 'view-file-other-window))
       (dired-view-file)
       (fset 'view-file (symbol-function 'old)))))
+
+(setq dired-guess-shell-alist-user
+      '(("^.*\.odt$" "odt2txt")))
 
 (setq wdired-enable t)
 
@@ -319,6 +322,15 @@
 ;; (add-hook 'gnus-startup-hook 'bbdb-insinuate-gnus)
 ;; (bbdb-insinuate-message)
 
+; moy-bbdb is a library to add addresses to which I sent mail to bbdb.
+(autoload 'bbdb/send-hook "moy-bbdb"
+  "Function to be added to `message-send-hook' to notice records
+when sending messages" t)
+(add-hook 'message-send-hook 'bbdb/send-hook) ; If you use Gnus
+;(add-hook 'mail-send-hook 'bbdb/send-hook) ; For other mailers
+;                                           ; (VM, Rmail)
+
+
 ;; ==============================
 ;; Jabber
 ;; ==============================
@@ -362,6 +374,47 @@
 (add-to-list 'emms-info-functions 'emms-info-mpd)
 (add-to-list 'emms-player-list 'emms-player-mpd)
 (setq emms-player-mpd-music-directory "/extra/multimedia/musica/")
+
+(defun ts-file-is-in-mpd-dir (file)
+  (if (string-match (format "^%s" emms-player-mpd-music-directory)
+                    file)
+      t
+    nil))
+
+(defun ts-emms-play-file-no-mpd (file)
+  (setq emms-player-list (delete 'emms-player-mpd emms-player-list))
+  (message "%s" emms-player-list)
+  (emms-stop)
+  (emms-play-file file)
+  (add-to-list 'emms-player-list 'emms-player-mpd))
+
+(defun ts-dired-play-file-maybe-mpd (&optional filename)
+  (interactive)
+  (let ((file (or filename
+                  (dired-get-file-for-visit))))
+    (if (ts-file-is-in-mpd-dir file)
+        (emms-play-file file)
+      (ts-emms-play-file-no-mpd file))))
+
+(defun dired-advertised-find-file (&rest options)
+  "In dired, visit the file or directory named on this line,
+except if it is a known multimedia file, in which case play with
+emms."
+  (interactive)
+  (let ((find-file-run-dired t)
+        (file (dired-get-file-for-visit)))
+    (if (string-match ".*\\(mp3\\|ogg\\|flac\\)$"
+                      file)
+        (ts-dired-play-file-maybe-mpd file)
+      (find-file file))))
+
+;; library to download and save lyrics.  see also lyric-mode, which
+;; aids to write lrc files, lyrics with timings.
+;;
+;; http://www.google.com.br/custom?hl=pt&cof=&domains=letras.terra.com.br&
+;; q=chico+buarque+jumento&btnG=Pesquisar&sitesearch=letras.terra.com.br
+(load-library "emms-get-lyrics")
+
 
 ;; ===========================
 ;; Load stuff
