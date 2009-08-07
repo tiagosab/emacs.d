@@ -64,47 +64,6 @@ alunos"
       (kbd "\C-c m") 'al-sendmail)
     map))
 
-(defvar alunos-font-lock-defaults
-  (list `(
-          ("^[ \t]*\\*\\{3\\}.*\\*\\{3\\}[ \t]*" . alunos-date-face)
-          ,(let ((content "[ \t]*\\(.+\\(\n[ \t].*\\)*\\)\n?"))
-             `(,(al-font-lock-make-header-matcher
-                 (concat "^\\([A-Z][^: \n\t]+:\\)" content))
-               (1 alunos-header-name-face)
-               (2 alunos-header-text-face nil t)))
-          )
-        t ; keywords only
-        ))
-
-(defun alunos (aluno)
-  (interactive (al-read-aluno))
-  (find-file (concat alunos-dir aluno "/Notes.muse"))
-  (end-of-buffer)
-  (if (looking-back "[ \t\n]*" nil t)
-      (delete-region (match-beginning 0) (match-end 0)))
-  (insert "\n\n***")
-  (ts-insert-date-string)
-  (insert "***\n\n")
-  (rename-buffer aluno)
-  (alunos-mode)
-)
-
-(defun al-read-aluno ()
-  (list (completing-read "Aluno: " (al-get-alunos-list))))
-
-(defun al-get-alunos-list ()
-  (let* ((ls-out (shell-command-to-string (concat "ls -1 " alunos-dir)))
-         (ls (split-string ls-out "\n" t)))
-    ls))
-
-(define-derived-mode alunos-mode text-mode "Alunos"
-;  "Major mode for taking notes about students."
-  (set (make-local-variable 'mail-header-separator)
-       "[ \t]*")
-  (set (make-local-variable 'font-lock-defaults)
-        alunos-font-lock-defaults)
-)
-
 (defun al-font-lock-make-header-matcher (regexp)
   "Adapted from message-font-lock-make-header-matcher."
   (let ((form
@@ -120,6 +79,54 @@ alunos"
     (if (featurep 'bytecomp)
         (byte-compile form)
       form)))
+
+(defvar alunos-font-lock-defaults
+  (list `(
+          ("^[ \t]*\\*\\{3\\}.*\\*\\{3\\}[ \t]*" . alunos-date-face)
+          ,(let ((content "[ \t]*\\(.+\\(\n[ \t].*\\)*\\)\n?"))
+             `(,(al-font-lock-make-header-matcher
+                 (concat "^\\([A-Z][^: \n\t]+:\\)" content))
+               (1 alunos-header-name-face)
+               (2 alunos-header-text-face nil t)))
+          )
+        t ; keywords only
+        ))
+
+(defun alunos (aluno &optional readonly)
+  "Open notes file of student ALUNO. If READONLY is true, don't
+insert date and turn on view-mode.
+
+Interactively, read ALUNO in minibuffer, completing for directory
+entries in ALUNOS-DIR."
+  (interactive (list (al-read-aluno) current-prefix-arg))
+  (find-file (concat alunos-dir aluno "/Notes.muse"))
+  (end-of-buffer)
+  (when (null readonly)
+    (if (looking-back "[ \t\n]*" nil t)
+        (delete-region (match-beginning 0) (match-end 0)))
+    (insert "\n\n***")
+    (ts-insert-date-string)
+    (insert "***\n\n"))
+  (rename-buffer aluno)
+  (alunos-mode)
+  (when readonly
+    (view-mode t)))
+
+(defun al-read-aluno ()
+  (completing-read "Aluno: " (al-get-alunos-list)))
+
+(defun al-get-alunos-list ()
+  (let* ((ls-out (shell-command-to-string (concat "ls -1 " alunos-dir)))
+         (ls (split-string ls-out "\n" t)))
+    ls))
+
+(define-derived-mode alunos-mode text-mode "Alunos"
+;  "Major mode for taking notes about students."
+  (set (make-local-variable 'mail-header-separator)
+       "[ \t]*")
+  (set (make-local-variable 'font-lock-defaults)
+        alunos-font-lock-defaults)
+)
 
 (defun al-sendmail (&optional beg end)
   (interactive)
