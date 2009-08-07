@@ -58,7 +58,7 @@ alunos"
 
 (defvar alunos-mode-map
   (let ((map (make-keymap)))
-    (define-key map 
+    (define-key map
       (kbd "\C-c d") 'ts-insert-date-string)
     (define-key map
       (kbd "\C-c m") 'al-sendmail)
@@ -87,10 +87,8 @@ alunos"
              `(,(al-font-lock-make-header-matcher
                  (concat "^\\([A-Z][^: \n\t]+:\\)" content))
                (1 alunos-header-name-face)
-               (2 alunos-header-text-face nil t)))
-          )
-        t ; keywords only
-        ))
+               (2 alunos-header-text-face nil t))))
+        t)) ; keywords only
 
 (defun alunos (aluno &optional readonly)
   "Open notes file of student ALUNO. If READONLY is true, don't
@@ -125,8 +123,7 @@ entries in ALUNOS-DIR."
   (set (make-local-variable 'mail-header-separator)
        "[ \t]*")
   (set (make-local-variable 'font-lock-defaults)
-        alunos-font-lock-defaults)
-)
+        alunos-font-lock-defaults))
 
 (defun al-sendmail (&optional beg end)
   (interactive)
@@ -136,12 +133,11 @@ entries in ALUNOS-DIR."
                   al-mail-subject ; subject
                   nil ; other-headers
                   nil ; continue
-                  'pop-to-buffer ; switch-function
+                  'pop-to-buffer) ; switch-function
                   ; the next option would be yank-action, but
                   ; unfortunately it is not fully implemented in
                   ; message-mode
                   ; (list 'insert-buffer (al-get-buffer-with-last-class))
-                  )
     (remove-hook 'message-mode-hook get-last-string)))
 
 (defun al-get-last-string-callback ()
@@ -156,11 +152,9 @@ entries in ALUNOS-DIR."
         (set-buffer tempbuffer)
         (erase-buffer)
         (insert-buffer-substring-no-properties curbuffer beg end)
-        (setq al-tempbuffer tempbuffer)
-        )
+        (setq al-tempbuffer tempbuffer))
       (lambda ()
-        (insert-buffer-substring-no-properties al-tempbuffer); beg (point-max))
-        ))))
+        (insert-buffer-substring-no-properties al-tempbuffer)))))
 
 (defun al-students-addresses ()
   (save-excursion
@@ -169,8 +163,6 @@ entries in ALUNOS-DIR."
       (while (not (looking-at "[ \t]*$"))
         (if (looking-at "[Cc]ourriel:[ \t]*\\(.*@.*\\)")
             (progn
-              (setq addresses (cons (match-string 1) addresses)))
-           )
-        ;(next-line))
+              (setq addresses (cons (match-string 1) addresses))))
         (forward-line))
       (mapconcat 'identity addresses ", "))))
