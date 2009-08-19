@@ -42,6 +42,7 @@
 (add-to-list 'load-path "~/lib/emacs")
 (add-to-list 'load-path "~/lib/emacs/http")
 (add-to-list 'load-path "~/lib/emacs/ljupdate-read-only/")
+(add-to-list 'load-path "~/etc/emacs.d")
 
 ; load my general-purpose library
 (load-library "tiago")
@@ -73,7 +74,34 @@
           (lambda ()
             (set-frame-height nil 35)))
 
-;(setq menu-bar-mode-on-hook nil)
+; abbrevs for find-file
+;
+; I would like to setup something like that, but it is not working for
+; now.  I suppose the bindings are the problem, but both ways I have
+; found insist not to work: SPC is always bound to
+; self-insert-command.
+(defun geosoft-parse-minibuffer ()
+  ;; Extension to the complete word facility of the minibuffer
+  (interactive)
+  (backward-char 4)
+  (setq found t)
+  (cond
+     ; local directories
+     ((looking-at "pyti") (setq directory "/home/tiago/src/pyti/"))
+     ((looking-at "home") (setq directory "/home/tiago/home/"))
+     ((looking-at ".src") (setq directory "/home/tiago/src/"))
+     (t (setq found nil)))
+  (cond (found (beginning-of-line)
+                (kill-line)
+                (insert directory))
+         (t     (forward-char 4)
+                (minibuffer-complete))))
+;; (define-key minibuffer-local-completion-map
+;;   " " 'geosoft-parse-minibuffer)
+;; (add-hook 'minibuffer-setup-hook
+;;           '(lambda ()
+;;              (define-key minibuffer-local-completion-map
+;;                " " 'geosoft-parse-minibuffer)))
 
 ;; ==============================
 ;; Basic editor settings
@@ -152,12 +180,19 @@
 (load-library "robert")
 (setq rob-switch-to-buffer 'display-buffer)
 
+; if we have autoinsert, load my config
+(and (require 'autoinsert nil t)
+     (load-library "ts-autoinsert"))
+
 (add-to-list 'load-path "~/src/third-party/emacs-ditz/")
 (require 'ditz)
 
 (require 'ljupdate)
 (require 'tc)
 (require 'stumpwm-mode)
+
+(add-to-list 'load-path "~/lib/emacs/mldonkey-el-0.0.4b/")
+(load-library "mldonkey-config")
 
 ;;; load debian copyright mode
 ;; (load "/home/tiago/.emacs.d/debian-mr-copyright-mode.el")
@@ -300,11 +335,31 @@
 
 (setq message-directory "~/Gnumail/")
 
+; This is the prefix for temporary files used by gnus when downloading
+; files (in my case (the mail case), in fact, it just copies the
+; contents from files in another dir
+;; (setq mail-source-incoming-file-prefix "Incoming")
+; This chooses when to delete those temporary files; t is immediately,
+; nil is never, or a number of days. Default is nil in CVS, t in
+; released versions.
+;; (setq mail-source-delete-incoming nil)
+
 ; configure smtp to use gmail.
 (load-file "/home/tiago/etc/sensible-data/emacs-gmail.el")
 
 ; nmh
 (setq mh-recursive-folders-flag t)
+
+; directory from which all other Gnus file variables are derived.
+; must be set in .emacs instead of gnus.el
+(setq gnus-directory "~/Gnumail/")
+
+; if gnus is not running, message-mode will store drafts in this
+; directory (under message-directory). They are now pointing to the
+; same place, what happens when one just sets gnus-directory and
+; message-directory to the same dir. Is this safe? "drafts" is the
+; default value.
+;; (setq message-auto-save-directory "drafts")
 
 ;; ==============================
 ;; BBdb
@@ -330,6 +385,13 @@ when sending messages" t)
 ;(add-hook 'mail-send-hook 'bbdb/send-hook) ; For other mailers
 ;                                           ; (VM, Rmail)
 
+
+;; ==============================
+;; W3m
+;; ==============================
+
+(setq w3m-use-cookies t)
+(setq w3m-follow-redirection 20)
 
 ;; ==============================
 ;; Jabber
@@ -433,6 +495,8 @@ emms."
 (define-key ctl-ç-map "[" 'ts-corr-brack)
 (define-key ctl-ç-map "{" 'ts-corr-curl)
 
+(global-set-key (kbd "s-d") 'dict)
+
 ; quick help on help
 (define-key help-map "h"
   (lambda ()
@@ -467,3 +531,10 @@ emms."
 (global-set-key "\C-xf" 'find-function)
 
 (global-set-key (kbd "A-x A-r") 'ts-find-alternative-file-with-sudo)
+
+;; use view-mode instead of just toggling read-only flag
+(global-set-key (kbd "C-x C-q") 'view-mode)
+
+(put 'narrow-to-page 'disabled nil)
+
+(put 'narrow-to-region 'disabled nil)
