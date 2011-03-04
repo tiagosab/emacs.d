@@ -9,6 +9,12 @@
 
 (when (fboundp 'blink-cursor-mode)
   (blink-cursor-mode -1))
+(global-hl-line-mode t)
+(setq hl-line-sticky-flag t)
+;(set-face-background 'hl-line "RoyalBlue4")
+;(set-face-background 'hl-line "gray")
+(set-face-background 'hl-line "gray12")
+(set-face-foreground 'hl-line nil)
 
 ;; display the current time
 (display-time)
@@ -21,6 +27,20 @@
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
 (fringe-mode -1)
+
+;; fullscreen
+(defun toggle-fullscreen (&optional f)
+  (interactive)
+  (let ((current-value (frame-parameter nil 'fullscreen)))
+    (set-frame-parameter nil 'fullscreen
+                         (if (equal 'fullboth current-value)
+                             (if (boundp 'old-fullscreen) old-fullscreen nil)
+                           (progn (setq old-fullscreen current-value)
+                                  'fullboth)))))
+; this is useful when not running a tiling window manager
+; (add-hook 'after-make-frame-functions 'toggle-fullscreen)
+
+(setq mouse-yank-at-point t)
 
 ;; black background - moved to Xresources/Xdefaults
 
@@ -146,6 +166,14 @@
 (setq scroll-step 1)
 (setq scroll-conservatively 8)
 
+;; show parent dirs name
+(require 'uniquify)
+(setq uniquify-buffer-name-style 'reverse)
+(setq uniquify-min-dir-content 2)
+; other interesting feature, but conflicts with min-dir-content
+; (setq uniquify-strip-common-suffix t)
+
+
 ;; ==============================
 ;; Minor mode config
 ;; ==============================
@@ -191,8 +219,11 @@
 (require 'tc)
 (require 'stumpwm-mode)
 
-(add-to-list 'load-path "~/lib/emacs/mldonkey-el-0.0.4b/")
-(load-library "mldonkey-config")
+(add-to-list 'load-path "~/lib/emacs/eldonkey/")
+(load-file "/home/tiago/etc/sensible-data/mldonkey.el")
+(require 'eldonkey)
+
+; (load-library "mldonkey-config")
 
 ;;; load debian copyright mode
 ;; (load "/home/tiago/.emacs.d/debian-mr-copyright-mode.el")
@@ -206,7 +237,7 @@
 ;; ===========================
 
 ;(require 'gnus-dired) ;, isn't needed due to autoload cookies
-(add-hook 'dired-mode-hook 'turn-on-gnus-dired-mode)
+; (add-hook 'dired-mode-hook 'turn-on-gnus-dired-mode)
 
 ; If we are to change dired-mode-map, we must:
 (require 'dired)
@@ -227,10 +258,17 @@
       (dired-view-file)
       (fset 'view-file (symbol-function 'old)))))
 
+; open file in external viewer (according to system configuration; see
+; man(1) run-mailcap
+(define-key dired-mode-map (kbd "s-s") 'ts-dired-external-see)
+
 (setq dired-guess-shell-alist-user
       '(("^.*\.odt$" "odt2txt")))
 
 (setq wdired-enable t)
+
+(require 'dired-x)
+(add-hook 'dired-mode-hook (lambda () (dired-omit-mode 1)))
 
 ;; ===========================
 ;; Text mode
@@ -313,14 +351,48 @@
 ;;(setq ibuffer-mode-hook nil)
 
 ;; ==============================
-;; TeX / LaTeX / AucTeX
+;;; Org-mode
 ;; ==============================
 
-; (TeX-global-PDF-mode t)
+(global-set-key "\C-cl" 'org-store-link)
+;(global-set-key "\C-ca" 'org-agenda)
+(global-set-key "\C-cb" 'org-iswitchb)
+
+(eval-after-load "org-latex"
+  '(setq org-export-latex-classes
+         (append '(
+                   ("matharticle"
+                    "\\documentclass[11pt]{article}
+\\usepackage[utf8]{inputenc}
+\\usepackage[T1]{fontenc}
+\\usepackage{graphicx}
+\\usepackage{longtable}
+\\usepackage{hyperref}
+\\usepackage{amsmath}"
+            ("\\section{%s}" . "\\section*{%s}")
+            ("\\subsection{%s}" . "\\subsection*{%s}")
+            ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+            ("\\paragraph{%s}" . "\\paragraph*{%s}")
+            ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+          org-export-latex-classes)))
 
 ;; ==============================
-;; Mail
+;;; TeX / LaTeX / AucTeX
 ;; ==============================
+
+(eval-after-load 'latex
+  '(let
+       ((hooks '(outline-minor-mode
+                 ts-auctex-hide-document-class-begin
+                 TeX-fold-mode
+                 TeX-fold-buffer)))
+     (setq hooks (nreverse hooks))
+     (while hooks
+       (add-hook 'LaTeX-mode-hook
+                 (car hooks))
+       (setq hooks (cdr hooks)))))
+
+;;; Mail
 
 ; The default send-mail-function , sendmail-send-it, uses local
 ; sendmail (which would be fine, since I have esmtp configured
@@ -328,12 +400,12 @@
 ; (which I need, since my conf file is not in the normal place. So, I
 ; have to use the internal smtp handler.
 
-(setq send-mail-function 'smtpmail-send-it)
+;; (setq send-mail-function 'smtpmail-send-it)
 
-(setq mail-user-agent 'message-user-agent)
-(setq message-send-mail-function 'smtpmail-send-it)
-
-(setq message-directory "~/Gnumail/")
+;; (setq mail-user-agent 'gnus-user-agent)
+;; (setq message-send-mail-function 'smtpmail-send-it)
+;;
+;; (setq message-directory "~/Gnumail/")
 
 ; This is the prefix for temporary files used by gnus when downloading
 ; files (in my case (the mail case), in fact, it just copies the
@@ -345,14 +417,14 @@
 ;; (setq mail-source-delete-incoming nil)
 
 ; configure smtp to use gmail.
-(load-file "/home/tiago/etc/sensible-data/emacs-gmail.el")
+; (load-file "/home/tiago/etc/sensible-data/emacs-gmail.el")
 
 ; nmh
-(setq mh-recursive-folders-flag t)
+; (setq mh-recursive-folders-flag t)
 
 ; directory from which all other Gnus file variables are derived.
 ; must be set in .emacs instead of gnus.el
-(setq gnus-directory "~/Gnumail/")
+; (setq gnus-directory "~/Gnumail/")
 
 ; if gnus is not running, message-mode will store drafts in this
 ; directory (under message-directory). They are now pointing to the
@@ -366,7 +438,7 @@
 ;; ==============================
 
 (require 'bbdb)
-(bbdb-initialize 'gnus 'message) ; 'w3)
+; (bbdb-initialize 'gnus 'message) ; 'w3)
 (setq bbdb-north-american-phone-numbers-p nil)
 (setq bbdb-legal-zip-codes '("^$"
                              "^[ 	\n]*[0-9][0-9]?[0-9]?[0-9]?[0-9]?[0-9]?[ 	\n]*$"
@@ -397,11 +469,19 @@ when sending messages" t)
 ;; Jabber
 ;; ==============================
 
-(setq jabber-account-list '(
-                            ("tiagosaboga@gmail.com"
-                             (:network-server . "talk.google.com")
-                             (:port . 443)
-                             (:connection-type . ssl))))
+(eval-after-load "jabber"
+  '(progn
+     (setq jabber-account-list '(
+                                 ("tiagosaboga@gmail.com"
+                                  (:network-server . "talk.google.com")
+                                  (:port . 443)
+                                  (:connection-type . ssl))))
+     (setq jabber-show-offline-contacts nil)
+     (set-face-attribute 'jabber-title-large nil
+                         :width 'expanded
+                         :height 1.5)
+     (set-face-attribute 'jabber-title-medium nil
+                         :height 1.5)))
 
 ;; ==============================
 ;; Emms / mpd
@@ -495,7 +575,17 @@ emms."
 (define-key ctl-ç-map "[" 'ts-corr-brack)
 (define-key ctl-ç-map "{" 'ts-corr-curl)
 
-(global-set-key (kbd "s-d") 'dict)
+(setq super-dict-map (make-sparse-keymap))
+(defalias 'super-d-prefix super-dict-map)
+(global-set-key (kbd "s-d") 'super-d-prefix)
+(define-key super-dict-map "d" 'dict)
+(define-key super-dict-map "t" 'tresor)
+(define-key super-dict-map "r" 'robert)
+
+
+(global-set-key (kbd "s-t") 'tresor)
+(global-set-key (kbd "s-w") 'w3m)
+(global-set-key (kbd "C--") 'undo)
 
 ; quick help on help
 (define-key help-map "h"
@@ -538,3 +628,51 @@ emms."
 (put 'narrow-to-page 'disabled nil)
 
 (put 'narrow-to-region 'disabled nil)
+
+(put 'downcase-region 'disabled nil)
+
+;; ===========================
+;; Wanderlust
+;; ===========================
+
+;; wanderlust
+(autoload 'wl "wl" "Wanderlust" t)
+(autoload 'wl-other-frame "wl" "Wanderlust on new frame." t)
+(autoload 'wl-draft "wl-draft" "Write draft with Wanderlust." t)
+
+;; IMAP
+(setq elmo-imap4-default-server "imap.gmail.com")
+(setq elmo-imap4-default-user "tiagosaboga@gmail.com") 
+(setq elmo-imap4-default-authenticate-type 'clear) 
+(setq elmo-imap4-default-port '993)
+(setq elmo-imap4-default-stream-type 'ssl)
+
+(setq elmo-imap4-use-modified-utf7 t) 
+
+;; SMTP
+(setq wl-smtp-connection-type 'starttls)
+(setq wl-smtp-posting-port 587)
+(setq wl-smtp-authenticate-type "plain")
+(setq wl-smtp-posting-user "tiagosaboga@gmail.com")
+(setq wl-smtp-posting-server "smtp.gmail.com")
+(setq wl-local-domain "gmail.com")
+
+(setq wl-default-folder "%inbox")
+(setq wl-default-spec "%")
+(setq wl-draft-folder "%[Gmail]/Drafts") ; Gmail IMAP
+(setq wl-trash-folder "%[Gmail]/Trash")
+
+(setq wl-folder-check-async t)
+
+(setq elmo-imap4-use-modified-utf7 t)
+
+(autoload 'wl-user-agent-compose "wl-draft" nil t)
+(if (boundp 'mail-user-agent)
+    (setq mail-user-agent 'wl-user-agent))
+(if (fboundp 'define-mail-user-agent)
+    (define-mail-user-agent
+      'wl-user-agent
+      'wl-user-agent-compose
+      'wl-draft-send
+      'wl-draft-kill
+      'mail-send-hook))
