@@ -9,12 +9,34 @@
 
 (when (fboundp 'blink-cursor-mode)
   (blink-cursor-mode -1))
-(global-hl-line-mode t)
 (setq hl-line-sticky-flag t)
+(global-hl-line-mode nil)
 ;(set-face-background 'hl-line "RoyalBlue4")
 ;(set-face-background 'hl-line "gray")
 (set-face-background 'hl-line "gray12")
 (set-face-foreground 'hl-line nil)
+
+(defun ts-next-hl-line-face-background ()
+  (interactive)
+  (let ((current (face-background 'hl-line))
+        (colors '("RoyalBlue4" "gray" "gray12" "black"))
+        (new nil))
+    (setq new
+          (let ((first (car colors)))
+            (while colors
+              (let ((color (car colors)))
+                (setq colors (cdr colors))
+                (when (string-match current color)
+                  (setq new (nth 0 colors))
+                  (setq colors ())
+                  )))
+            (if (not new)
+                (setq new first))
+            new))
+    (message (concat "New hl-line background: " new))
+    (set-face-background 'hl-line new)))
+  
+(global-set-key (kbd "C-c C-ç") 'ts-next-hl-line-face-background)
 
 ;; display the current time
 (display-time)
@@ -189,6 +211,9 @@
 ;; Major modes config
 ;; ==============================
 
+;; set plantuml location
+(setq plantuml-jar-path "/home/tiago/lib/java/plantuml.jar")
+
 ;; do not use separate frame for woman
 (setq woman-use-own-frame nil)
 
@@ -286,14 +311,13 @@
 
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 
-(setq ibuffer-show-empty-filter-groups nil)
-
 ;; reverse the default sorting order
 ;(setq ibuffer-default-sorting-reversep nil)
 
 (setq ibuffer-saved-filter-groups
   (quote
    (("default"
+     ("docdac" (filename . "/home/tiago/src/paudearara"))
      ("dired" (mode . dired-mode))
      ("gnus" (or
               (mode . message-mode)
@@ -337,9 +361,11 @@
 ;; Hide gnus group
 (add-hook 'ibuffer-mode-hook
           (lambda ()
-            (dolist (grp '("gnus" "lisp" "man" "internal" "dired"))
-              (setq ibuffer-hidden-filter-groups
-                    (cons grp ibuffer-hidden-filter-groups)))))
+            ;; (dolist (grp '("gnus" "lisp" "man" "internal" "dired"))
+            ;;   (setq ibuffer-hidden-filter-groups
+            ;;         (cons grp ibuffer-hidden-filter-groups)))
+            (setq ibuffer-show-empty-filter-groups nil)
+              ))
 
 ;; load default groups (set above).
 ;; must run before previous hook, so it must be added later.
@@ -619,6 +645,7 @@ emms."
 (global-set-key "\C-cq" 'comment-out-region)
 
 (global-set-key "\C-xf" 'find-function)
+(global-set-key "\C-x\M-f" 'find-library)
 
 (global-set-key (kbd "A-x A-r") 'ts-find-alternative-file-with-sudo)
 
