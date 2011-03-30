@@ -116,6 +116,36 @@
           (lambda ()
             (set-frame-height nil 35)))
 
+;;From Herio: 2011-03-29
+;Change cutting behaviour: if you press copy or cut when no region is
+;active you'll copy or cut the current line:"
+(defadvice kill-ring-save (before slickcopy activate compile)
+  "When called interactively with no active region, copy a single
+line instead."
+  (interactive
+   (if mark-active (list (region-beginning) (region-end))
+     (list (line-beginning-position)
+           (line-beginning-position 2)))))
+
+(defadvice kill-region (before slickcut activate compile)
+  "When called interactively with no active region, kill a single
+line instead."
+  (interactive
+   (if mark-active (list (region-beginning) (region-end))
+     (list (line-beginning-position)
+           (line-beginning-position 2)))))
+
+(defun hs-copy-rectangle (start end &optional fill)
+  "Save the rectangle as if killed, but don't kill it.  See
+`kill-rectangle' for more information."
+  (interactive "r\nP")
+  (kill-rectangle start end fill)
+  (goto-char start)
+  (yank-rectangle))
+
+(global-set-key (kbd "C-x r M-w") 'hs-copy-rectangle)
+;;End From Herio
+
 ; abbrevs for find-file
 ;
 ; I would like to setup something like that, but it is not working for
