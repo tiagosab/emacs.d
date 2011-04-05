@@ -19,7 +19,7 @@
 (defun ts-next-hl-line-face-background ()
   (interactive)
   (let ((current (face-background 'hl-line))
-        (colors '("RoyalBlue4" "gray" "gray12" "black"))
+        (colors '("gray" "gray12"))
         (new nil))
     (setq new
           (let ((first (car colors)))
