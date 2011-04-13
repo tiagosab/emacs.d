@@ -1,0 +1,6 @@
+[submodule "nxhtml"]
+	path = nxhtml
+	url = https://github.com/emacsmirror/nxhtml.git
+[submodule "eldonkey"]
+	path = eldonkey
+	url = file:///home/tiago/src/elisp/eldonkey/
