@@ -83,9 +83,9 @@
 
 (defvar robert-mode-map
   (let ((map (make-sparse-keymap)))
-    (define-key map 
+    (define-key map
       (kbd "RET") 'robert)
-    (define-key map 
+    (define-key map
       (kbd "e") 'rob-toggle-exemples)
     (define-key map
       (kbd "d") 'rob-toggle-definitions)
@@ -112,21 +112,18 @@
     (list (list "<s>" robert-entry-face)
           (list "<e>" robert-meaning-face); hard-newline)
           (list "<d>"); robert-definition-face)
-          (list "<c>" 'rob-parse-citation); "      "); (concat hard-newline "      "))
-          (list "<a>" 'rob-parse-citation-author); "        "); robert-author-face "        ") 
-                                        ;(concat hard-newline "        ") hard-newline)
+          (list "<c>" 'rob-parse-citation)
+          (list "<a>" 'rob-parse-citation-author)
           (list "<x2>" robert-x2-face)
           (list "<x3>" robert-x3-face)
           (list "<x4>" robert-x4-face)
           (list "<b>" robert-bold-face)
           (list "<i>" robert-italic-face)
-          (list "<n>" nil "   ")
-          )
+          (list "<n>" nil "   "))
 ;    "Please document me."
     )
   (defvar robert-footer-categories-faces
-    (list (list "footer" nil hard-newline)))
-  )
+    (list (list "footer" nil hard-newline))))
 
 (define-derived-mode robert-mode text-mode "Robert"
   "Major mode for reading entries from the 'Grand Robert' dictionary.
@@ -135,7 +132,7 @@ Keys:
 e - toggle visibility of examples
 d - toggle visibility of definitions
 s - toggle visibility of syntagmes
-o - toggle visibility of other (bibliographie, etymologie, 
+o - toggle visibility of other (bibliographie, etymologie,
                                remarques, statistiques)
 m - toggle visibility of less important sections
 t - tout visible
@@ -150,7 +147,7 @@ h / ? - display this help
     (rob-parse-subtree robert-contents-categories-faces)
 ;    (make-local-variable 'fill-nobreak-invisible)
 ;    (setq fill-nobreak-invisible t)
-    (set (make-local-variable 'fill-nobreak-predicate) 
+    (set (make-local-variable 'fill-nobreak-predicate)
          (cons 'fill-french-nobreak-p fill-nobreak-predicate))
     (set (make-local-variable 'paragraph-start)
     ;;     "Never-matching regexp.")
@@ -161,10 +158,8 @@ h / ? - display this help
     (set (make-local-variable 'adaptive-fill-mode) t)
     ;(fill-region (point-min) (point-max))
     (fill-individual-paragraphs (point-min) (point-max))
-    (toggle-read-only t)
-    )
-  (beginning-of-buffer)
-)
+    (toggle-read-only t))
+  (beginning-of-buffer))
 
 (defun rob-parse-citation(beg end cat)
   (save-excursion
@@ -180,8 +175,7 @@ h / ? - display this help
         (replace-match "\n      "))
       (let ((overlay (make-overlay beg end)))
         (overlay-put overlay 'face robert-citation-face)
-        (overlay-put overlay 'cat cat)
-        ))))
+        (overlay-put overlay 'cat cat)))))
 
 (defun rob-parse-citation-author (beg end cat)
   (save-excursion
@@ -192,9 +186,7 @@ h / ? - display this help
     (let* ((end (re-search-forward "\n"))
            (overlay (make-overlay beg end)))
       (overlay-put overlay 'face robert-author-face)
-      (overlay-put overlay 'cat cat)
-      )))
-
+      (overlay-put overlay 'cat cat))))
 
 (defun rob-delete-region (beg end &rest args)
   (delete-region beg end))
@@ -204,14 +196,23 @@ h / ? - display this help
     (if (search-forward-regexp regexp)
         (progn
           (goto-char (match-beginning 0))
-          (delete-region beg (point))
-          ))
-    ))
+          (delete-region beg (point))))))
 
 (defun rob-only-parse ()
   (interactive)
   (beginning-of-buffer)
   (rob-parse-subtree robert-contents-categories-faces))
+
+(defun rob-apply-to-region (beg end cat-face tag-open)
+  ""
+  (when (car cat-face)
+    (if (functionp (nth 1 cat-face))
+        (funcall (nth 1 cat-face) beg end tag-open)
+      (let ((overlay (make-overlay beg (point))))
+        (overlay-put overlay 'face (nth 1 cat-face))
+        (overlay-put overlay 'cat (nth 0 cat-face))))
+    (when (nth 3 cat-face)
+      (insert (nth 3 cat-face)))))
 
 (defun rob-parse-subtree (categories-faces)
   (let (subitems) ; list of (beginning tag-open (category-face)) lists
@@ -227,15 +228,7 @@ h / ? - display this help
                 (tag-open (or (car (cdr current))
                               ""))
                 (cat-face (car (cdr (cdr current)))))
-            (when (car cat-face)
-              (if (functionp (nth 1 cat-face))
-                  (funcall (nth 1 cat-face) beg (point-marker) tag-open)
-                (let ((overlay (make-overlay beg (point))))
-                  (overlay-put overlay 'face (nth 1 cat-face))
-                  (overlay-put overlay 'cat (nth 0 cat-face))
-                  ))
-              (when (nth 3 cat-face)
-                (insert (nth 3 cat-face))))
+            (rob-apply-to-region beg (point-marker) cat-face tag-open)
             (setq subitems (cdr subitems))
             (if (not (match-string 1))
                 (let ((item)
@@ -249,11 +242,9 @@ h / ? - display this help
                         (setq item '(nil nil)))))
                   (if (nth 2 item)
                       (insert (nth 2 item)))
-                  (setq subitems (cons (list (point-marker) data item) subitems))
-                  )
-              (message (match-string 1))
-              )
-            ))))))
+                  (setq subitems (cons (list (point-marker) data item)
+                                       subitems)))
+              (message (match-string 1)))))))))
 
 (defun robert-test ()
   (interactive)
@@ -261,9 +252,9 @@ h / ? - display this help
     (set-buffer buffer))
   (end-of-buffer)
   (if (eq 1 (point))
-      (url-retrieve (format "http://www.cnrtl.fr/definition/%s" "tarte") 'rob-preprocess-page)
-    (rob-process-page)
-    ))
+      (url-retrieve (format "http://www.cnrtl.fr/definition/%s" "tarte")
+                    'rob-preprocess-page)
+    (rob-process-page)))
 
 (defsubst rob-default-word-entry ()
   "Make a guess at a default entry.
@@ -281,10 +272,9 @@ This guess is based on the text surrounding the cursor."
     (re-search-forward "^Content-Type: text/html; charset=\\(.*\\)$")
     (match-string 1)))
 
-(defun rob-get-definition ( &rest args )
+(defun rob-get-definition (&rest args )
   (let ((buffer (current-buffer))
-        (tr-buffer (get-buffer-create "*Robert*"))
-        )
+        (tr-buffer (get-buffer-create "*Robert*")))
     (set-buffer tr-buffer)
     (let ((inhibit-read-only t))
       (auto-fill-mode nil)
@@ -292,35 +282,31 @@ This guess is based on the text surrounding the cursor."
       (kill-all-local-variables)
       (call-process derobeur-command nil t nil word)
       (funcall rob-switch-to-buffer tr-buffer))
-;;))
     (robert-mode)))
 
 (defun robert (word)
   "Fetch the page from Robert"
   (interactive (list (let* ((default-entry (rob-default-word-entry))
-	     (input (read-string
-		     (format "Mot à rechercher%s: "
-			     (if (string= default-entry "")
+             (input (read-string
+                     (format "Mot à rechercher%s: "
+                             (if (string= default-entry "")
                      ""
-			       (format " (défaut %s)" default-entry))))))
-	(if (string= input "")
-	    (if (string= default-entry "")
-		(error "No dict args given") default-entry) input))))
+                               (format " (défaut %s)" default-entry))))))
+        (if (string= input "")
+            (if (string= default-entry "")
+                (error "No dict args given") default-entry) input))))
   (rob-get-definition))
-  
-;  (url-retrieve (format "http://www.cnrtl.fr/definition/%s" word) 'rob-process-page ))
 
-(defun rob-preprocess-page( &rest args )
+(defun rob-preprocess-page (&rest args )
   (let ((buffer (current-buffer)))
     (set-buffer " rob-tarte")
     (insert-buffer-substring buffer)
     (beginning-of-buffer)
-    (rob-process-page))
-  )
+    (rob-process-page)))
 
 (defun rob-toggle-exemples ()
   (interactive)
-  (rob-toggle-by-type '("<e>" "<a>")))
+  (rob-toggle-by-type '("<c>" "<a>")))
 
 (defun rob-toggle-definitions ()
   (interactive)
@@ -355,38 +341,30 @@ remarques, bibliographie, statistiques, étymologie)."
     (let ((inhibit-read-only t))
       (fill-region (point-min) (point-max)))))
 
-
-(defun rob-toggle-by-type ( types &optional invisible )
+(defun rob-toggle-by-type (types &optional invisible )
   "Toggle invisible property of all overlays of type types. types
 should be a list of strings, which should each be present in the
 first column of some rob-*-categories-faces variable. The second
 argument, invisible, causes the function to explicitly set the
 state instead of toggling it. If it is positive, text will be
 visible; else, text will be invisible."
-  (while types
-    (let ((overlays (overlays-in (point-min) (point-max))))
-      (while overlays
-        (let (value
-              (overlay (car overlays)))
-          (if (equal (overlay-get overlay 'cat)
-                     (car types)) ; We're looking only at the first
-                                  ; element of the list.
-                                  ; TODO: correct this, here and on
-                                  ; tresor.el
-              (progn
-                (if invisible
-                    (if (> 0 invisible)
-                        (setq value nil)
-                      (setq value t))
-                  (setq value (not (overlay-get overlay 'invisible))))
-                (overlay-put overlay 'invisible (not (overlay-get overlay 'invisible))))
-            )
-          (setq overlays (cdr overlays))
-          )))
-    (setq types (cdr types))
-    )
+  (let (overlay
+        (overlays (overlays-in (point-min) (point-max)))
+        (value (if invisible
+                   (not (> 0 invisible)))))
+    (message "%s overlays." (length overlays))
+    (while overlays
+      (setq overlay (pop overlays))
+      (let ((tys types))
+        (while tys
+          (let ((type (pop tys)))
+            (if (equal (overlay-get overlay 'cat)
+                       type)
+                (progn
+                  (if (null value)
+                      (setq value (not (overlay-get overlay 'invisible))))
+                  (overlay-put overlay 'invisible value))))))))
   (let ((inhibit-read-only t))
     (save-excursion
-      (fill-region (point-min) (point-max))))
-  )
+      (fill-region (point-min) (point-max)))))
 

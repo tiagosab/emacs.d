@@ -1,0 +1,86 @@
+Uma ferramenta, dentro do emacs, para leitura de textos, com anotações
+de diversos tipos.
+
+* dicionários
+** externos
+Dicionários externos podem ser acessados com os comandos próprios (M-x
+dict, por exemplo). É possível (mas será desejável? certamente não,
+por exemplo, no caso do Trésor) também ter a possibilidade de juntar
+os resultados dos dicionários externos com os internos em um único
+buffer.
+** internos
+*** multiplicidade
+Um dicionário associa uma palavra ou um grupo de palavras a um pequeno
+texto. Quando fazemos anotações em um texto, seguimos o mesmo
+procedimento. Trataremos então as anotações do leitor como um
+dicionário a mais, que deve poder ser lido e modificado de forma
+conveniente.
+
+No caso de anotações ao texto, elas se referem a um pedaço específico
+do documento, e não a qualquer trecho que contenha o mesmo texto. Como
+lidar com essa diferença? Um dicionário, por outro lado, só tem a
+ganhar se souber aonde estavam as referências àquela palavra. Seria
+aliás muito útil uma tecla para adicionar a referência, sem
+necessariamente alterar o texto do dicionário. O método de busca é que
+é um pouco diferente. Em anotações, suponho que faça mais sentido ler
+o arquivo de anotações inteiro e determinar logo a que lugares do
+texto corresponde cada nota. Já para dicionários, essa abordagem não
+faz sentido. É preciso para cada palavra procurá-la no dicionário, já
+que a maior parte das palavras do dicionário não deve estar no texto.
+
+Além das anotações, é preciso gerenciar outros dicionários/glossários
+mantidos pelo leitor. Esses dicionários podem/devem ser específicos
+para cada língua, mas também para cada projeto, ou para cada
+texto. Mas como fazer o usuário do programa escolher a cada vez em
+qual nível deve estar cada observação? Comandos (associados a teclas e
+baseando-se na seleção ativa) podem levar à edição de cada um dos
+dicionários associados.
+*** locuções
+Como procurar por locuções? Ao se deparar com uma frase, é preciso
+procurar as palavras no dicionário. Mas como procurar locuções? Como
+fazem outros programas?
+*** bilingue
+*** unilingue
+*** apresentação
+Como indicar ao leitor que relê o texto quais são as referências em
+cada trecho? Colorir o texto? Chamadas para notas, entre colchetes? E
+um segundo buffer pode se atualizar automaticamente para a frase que
+está sob o cursor. Mas se o ponto estiver em uma palavra pertencente
+a grupos associados a definições em diferentes dicionários, como
+apresentar? Os vários dicionários devem estar em um único buffer, ou
+ficará impossível de procurar. E esse buffer deve indicar as teclas de
+atalho para editar cada um dos dicionários.
+** anotações
+No caso das anotações, como facilitar a leitura? Elas já estarão
+juntas em um arquivo à parte, mas seria bom ter formas de organizá-las
+para a leitura, colocando por exemplo os trechos anotados seguidos
+pelas observações.
+** tokenizer
+* tradução
+A tradução pode ser reduzida a anotações com uma regra de
+segmentação.
+** memória
+*** motor externo
+** glossário
+* interface
+** 2 buffers, 2 janelas
+** um buffer (OmegaT)
+** marcação de palavras presentes em dicionários
+** buffer conjunto vários dicionários
+* texto fonte
+** mutabilidade
+** manutenção de uma árvore interna (própria)
+* padrões / compatibilidade
+** XLIFF
+** SRX
+** TMX
+** OmegaT
+* Bibliotecas
+** Transolution
+** itools
+** python-poppler
+http://git.hforge.org/?p=itools.git;a=blob;f=srx/segment.py;h=1b2138633ec3825ae08d0118cc1f29a168b60aa4;hb=HEAD
+
+Local Variables:
+mode:outline
+End:

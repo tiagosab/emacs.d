@@ -12,6 +12,36 @@
   (interactive)
   (find-file "/home/tiago/src/elisp/repo/tiago.el"))
 
+(defun ts-ip ()
+  (interactive)
+  (browse-url-emacs "http://www.whatismyip.com/automation/n09230945.asp"))
+
+(require 'ipython)
+(defun ts-open-dacdoc ()
+  (interactive)
+  (find-file "/home/tiago/src/paudearara/docdac/dacdoc.py")
+  (find-file "/home/tiago/src/paudearara/sabase/sabase.py")
+  (w3m "file:///usr/share/doc/python2.6-doc/html/index.html")
+  (dired "/home/tiago/src/paudearara")
+  (with-current-buffer "paudearara|tiago/src"
+    (dired-maybe-insert-subdir "qt_design")
+    (dired-maybe-insert-subdir "sabase")
+    (dired-maybe-insert-subdir "docdac/ui")
+    (dired-maybe-insert-subdir "docdac"))
+  (py-shell))
+
+(defun ts-sabase-test ()
+  (interactive)
+  (shell-command "/home/tiago/src/paudearara/sabase.py -t &"))
+
+(defun ts-sabase-mkt ()
+  (interactive)
+  (shell-command "/home/tiago/src/paudearara/sabase.py -mkt &"))
+
+(defun ts-dacdoc-t ()
+  (interactive)
+  (shell-command "call-dacdoc.py -t &"))
+
 (defun ts-alunos ()
   (interactive)
   (find-file "/home/tiago/src/elisp/repo/alunos.el"))
@@ -51,6 +81,22 @@
       (re-search-forward
        (format "CAPÍTULO\[ \]*%s" (arabic-to-roman (string-to-number number))))
       (recenter 1))))
+
+;; source: http://steve.yegge.googlepages.com/my-dot-emacs-file
+(defun ts-rename-file-and-buffer (new-name)
+  "Renames both current buffer and file it's visiting to NEW-NAME."
+  (interactive "sNew name: ")
+  (let ((name (buffer-name))
+    (filename (buffer-file-name)))
+    (if (not filename)
+    (message "Buffer '%s' is not visiting a file!" name)
+      (if (get-buffer new-name)
+      (message "A buffer named '%s' already exists!" new-name)
+    (progn
+      (rename-file name new-name 1)
+      (rename-buffer new-name)
+      (set-visited-file-name new-name)
+      (set-buffer-modified-p nil))))))
 
 ;;
 ;; These should be implemented. But I should immediately document
@@ -192,9 +238,29 @@ expand wildcards (if any) and visit multiple files."
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Gnus / Mail
+;; Auctex
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(defun ts-auctex-hide-document-class-begin ()
+  (interactive)
+  (outline-minor-mode 1)
+  (save-excursion
+    (goto-char (point-min))
+    (when (re-search-forward "documentclass" nil t)
+      (hide-entry))
+    (when (re-search-forward "begin{document" nil t)
+      (hide-entry))))
+
+(defun ts-auctex-narrow-to-body ()
+  (interactive)
+  (save-excursion
+    (goto-char (point-min))
+    (when (re-search-forward "begin{document}.*\n" nil t)
+      (let ((beg (point)))
+        (when (re-search-forward "end{document}" nil t)
+          (beginning-of-line)
+          (let ((end (point)))
+            (narrow-to-region beg end)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Gnus / Mail
@@ -294,9 +360,9 @@ Otherwise, display it in another buffer."
   (interactive)
   (let ((file (dired-get-file-for-visit)))
     (if (file-directory-p file)
-	(or (and (cdr dired-subdir-alist)
-		 (dired-goto-subdir file))
-	    (dired file))
+        (or (and (cdr dired-subdir-alist)
+                 (dired-goto-subdir file))
+            (dired file))
       (view-file-other-window file))))
 
 (defun ts-dired-external-see ()
@@ -330,6 +396,66 @@ Otherwise, display it in another buffer."
   "Insert a nicely formated date string."
    (interactive)
    (insert (format-time-string "%a %b %d %H:%M:%S %Y")))
+
+(defun ts-convert-x-sampa-french-to-ipa ()
+  "Convert french phonetic representation from X-SAMPA to IPA."
+  (interactive)
+  (let ((conversion-alist '(("ã" . "~a")
+                            ("ɛ̃" . "~E")
+                            ("õ" . "~o")
+                            ("œ̃" . "~9")
+                            ("a" . "a")
+                            ("ɑ" . "A")
+                            ("e" . "e")
+                            ("ɛ" . "E")
+                            ("ə" . "@")
+                            ("i" . "i")
+                            ("o" . "o")
+                            ("ɔ" . "O")
+                            ("ø" . "2")
+                            ("œ" . "9")
+                            ("u" . "u")
+                            ("y" . "y")
+                            ("j" . "j")
+                            ("ɥ" . "H")
+                            ("w" . "w")
+                            ("b" . "b")
+                            ("d" . "d")
+                            ("f" . "f")
+                            ("g" . "g")
+                            ("k" . "k")
+                            ("l" . "l")
+                            ("m" . "m")
+                            ("n" . "n")
+                            ("ɲ" . "J")
+                            ("p" . "p")
+                            ("R" . "R")
+                            ("s" . "s")
+                            ("ʃ" . "S")
+                            ("t" . "t")
+                            ("v" . "v")
+                            ("z" . "z")
+                            ("ʒ" . "Z")))
+        (case-fold-search nil))
+    (save-excursion
+      (if (looking-back "[]/]")
+          (let* ((end-char (match-string 0))
+                 (beg-char (if (equal end-char "/")
+                               "/"
+                             "\\[")))
+            (backward-char)
+            (when
+                (looking-back (format "%s\\([^ \n]+\\)" beg-char))
+              (let* ((phonems (match-string 1)))
+                (save-match-data
+                  (while conversion-alist
+                    (when
+                        (string-match (cdar conversion-alist) phonems)
+                      (setq phonems (replace-match
+                                     (caar conversion-alist) t t
+                                     phonems)))
+                    (setq conversion-alist (cdr conversion-alist))))
+                (replace-match phonems t t nil 1))))))))
 
 ;; For (, [ and {, write the corresponding ), ] or } at once.
 ;; see skeleton mode, and emacswiki has a page for that.
@@ -479,3 +605,36 @@ Otherwise, display it in another buffer."
     (goto-char (point-max))
     (insert "\n\\end{document}\n"))
   (latex-mode))
+
+;;;;;;;;;;;;;;;;; Hide comments ;;;;;;;;;;
+; ignominiously stolen from
+; http://www.webservertalk.com/archive310-2005-6-1074609.html
+
+(defun ts-overlay-comments(beg end attrs)
+  (save-excursion
+    (goto-char beg)
+    (let (state comment-start comment-end overlay)
+      (while (nth 4 (setq state
+                          (parse-partial-sexp (point) end nil nil nil t)))
+        (goto-char (nth 8 state))
+        (setq comment-start (point))
+        (forward-comment 1)
+        (setq comment-end (point))
+        (while (= (char-before comment-end) ?\n)
+          (setq comment-end (1- comment-end)))
+        (setq overlay (make-overlay comment-start comment-end))
+        (mapc #'(lambda (attr)
+                  (overlay-put overlay (car attr) (cdr attr)))
+              attrs)))))
+
+(defun ts-hide-comments()
+  (interactive)
+  (ts-overlay-comments (point-min)
+                       (point-max)
+                       '((category . comment) (invisible . comment))))
+
+(defun ts-show-comments()
+  (interactive)
+  (dolist (ov (overlays-in (point-min) (point-max)))
+    (if (eq (overlay-get ov 'category) 'comment)
+        (delete-overlay ov))))

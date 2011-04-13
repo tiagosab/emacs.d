@@ -1,0 +1,22 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: rob-toggle-by-type only toggle one type of overlays.
+desc: ""
+type: :bugfix
+component: robert
+release: 
+reporter: Tiago Saboga <tiagosaboga@gmail.com>
+status: :in_progress
+disposition: 
+creation_time: 2009-05-10 02:12:06.952451 Z
+references: []
+
+id: 1a42d0d57421350d170dc9935befe80033914e3f
+log_events: 
+- - 2009-05-10 02:12:10.344964 Z
+  - Tiago Saboga <tiagosaboga@gmail.com>
+  - created
+  - ""
+- - 2009-05-10 15:49:22.864707 Z
+  - Tiago Saboga <tiagosaboga@gmail.com>
+  - changed status from unstarted to in_progress
+  - ""

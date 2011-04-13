@@ -65,9 +65,9 @@
 
 (defvar tresor-mode-map
   (let ((map (make-sparse-keymap)))
-    (define-key map 
+    (define-key map
       (kbd "RET") 'tresor)
-    (define-key map 
+    (define-key map
       (kbd "e") 'trs-toggle-exemples)
     (define-key map
       (kbd "d") 'trs-toggle-definitions)
@@ -92,9 +92,8 @@
   (defvar tresor-vtoolbar-categories-faces
     (list (list "vitemselected" 'trs-delete-region)
           (list "<a href" 'trs-make-button nil hard-newline)
-          (list "<sup>" tresor-sup-face " [" "]")
-          ))
-  
+          (list "<sup>" tresor-sup-face " [" "]")))
+
   (defvar tresor-contents-categories-faces
     (list (list "tlf_cexemple" tresor-example-face "   ")
           (list "tlf_cmot" tresor-entry-face)
@@ -107,7 +106,8 @@
           (list "tlf_tabulation" nil hard-newline)
           (list "tlf_parsynt" nil (concat hard-newline "      "))
           (list "tlf_paraputir" nil hard-newline)
-          (list "tlf_parothers" nil hard-newline) ; remarques, éthymologie, bibliographie, statistiques
+          (list "tlf_parothers" nil hard-newline) ; remarques, éthymologie,
+                                                  ; bibliographie, statistiques
           (list "tlf_contentbox" nil hard-newline)
           (list "tlf_csyntagme")
           )
@@ -122,8 +122,7 @@
 - tlf_cdate - date du livre de l'exemple"
     )
   (defvar tresor-footer-categories-faces
-    (list (list "footer" nil hard-newline)))
-  )
+    (list (list "footer" nil hard-newline))))
 
 (define-derived-mode tresor-mode text-mode "Trésor"
   "Major mode for reading entries from the 'Trésor de la Langue
@@ -133,7 +132,7 @@ Keys:
 e - toggle visibility of examples
 d - toggle visibility of definitions
 s - toggle visibility of syntagmes
-o - toggle visibility of other (bibliographie, etymologie, 
+o - toggle visibility of other (bibliographie, etymologie,
                                remarques, statistiques)
 m - toggle visibility of less important sections
 t - tout visible
@@ -150,9 +149,7 @@ h / ? - display this help
          (cons 'fill-french-nobreak-p fill-nobreak-predicate))
     (use-hard-newlines t)
     (fill-region (point-min) (point-max))
-    (toggle-read-only t)
-    )
-)
+    (toggle-read-only t)))
 
 (defun trs-delete-region (beg end &rest args)
   (delete-region beg end))
@@ -170,9 +167,7 @@ h / ? - display this help
     (if (search-forward-regexp regexp)
         (progn
           (goto-char (match-beginning 0))
-          (delete-region beg (point))
-          ))
-    ))
+          (delete-region beg (point))))))
 
 (defun trs-make-invisible-parts ()
   (trs-delete-until "<div id=\"vtoolbar.*?>")
@@ -181,8 +176,7 @@ h / ? - display this help
   (trs-parse-subtree tresor-contents-categories-faces)
   (trs-delete-until "<div id=\"footer\">")
   (trs-parse-subtree tresor-footer-categories-faces)
-  (delete-region (point) (point-max))
-)
+  (delete-region (point) (point-max)))
 
 (defun trs-parse-subtree (categories-faces)
   (let (subitems ; list of (beginning tag-open (category-face)) lists
@@ -215,14 +209,13 @@ h / ? - display this help
                                      ; face
                   (if (functionp (nth 1 cat-face)) ; if this face is
                                          ; in fact a function
-                      (funcall (nth 1 cat-face) beg (point) tag-open) 
+                      (funcall (nth 1 cat-face) beg (point) tag-open)
                                         ; call this function
                     (let ((overlay (make-overlay beg (point))))
                                         ; else, apply the face
                                         ; (through an overlay)
                       (overlay-put overlay 'face (nth 1 cat-face))
-                      (overlay-put overlay 'cat (nth 0 cat-face))
-                      )))
+                      (overlay-put overlay 'cat (nth 0 cat-face)))))
                 (if (nth 3 cat-face) ; if the cat-face asks,
                     (insert (nth 3 cat-face))) ; add a string at the
                                                ; end
@@ -241,11 +234,10 @@ h / ? - display this help
                       (setq item '(nil nil)))))
                 (if (nth 2 item)
                     (insert (nth 2 item)))
-                (setq subitems (cons (list (point-marker) data item) subitems))
-                )
+                (setq subitems
+                      (cons (list (point-marker) data item) subitems)))
             (if (string-match "<br/>" data)
-                (insert "\n"))
-            ))))))
+                (insert "\n"))))))))
 
 (defun tresor-test ()
   (interactive)
@@ -254,8 +246,7 @@ h / ? - display this help
   (end-of-buffer)
   (if (eq 1 (point))
       (url-retrieve (format "http://www.cnrtl.fr/definition/%s" "tarte") 'trs-preprocess-page)
-    (trs-process-page)
-    ))
+    (trs-process-page)))
 
 (defsubst trs-default-word-entry ()
   "Make a guess at a default entry.
@@ -266,14 +257,14 @@ This guess is based on the text surrounding the cursor."
         (substring word 0 (match-beginning 0))
       word)))
 
-(defun trs-get-charset-from-url-buffer ( buffer )
+(defun trs-get-charset-from-url-buffer (buffer)
   (save-excursion
     (set-buffer buffer)
     (beginning-of-buffer)
     (re-search-forward "^Content-Type: text/html; charset=\\(.*\\)$")
     (match-string 1)))
 
-(defun trs-process-page ( &rest args )
+(defun trs-process-page (&rest args)
   (let ((buffer (current-buffer))
         (tr-buffer (get-buffer-create "*Trésor*")))
     (with-current-buffer tr-buffer
@@ -286,24 +277,29 @@ This guess is based on the text surrounding the cursor."
                        (point-max)
                        (coding-system-from-name charset-name)
                        default-buffer-file-coding-system))
+      (goto-char (point-min))
       (tresor-mode)
       (goto-char (point-min)))
     (funcall trs-switch-to-buffer tr-buffer)))
 
 (defun tresor (word)
   "Fetch the page from Trésor"
-  (interactive (list (let* ((default-entry (trs-default-word-entry))
-	     (input (read-string
-		     (format "Mot à rechercher%s: "
-			     (if (string= default-entry "")
-				 ""
-			       (format " (défaut %s)" default-entry))))))
-	(if (string= input "")
-	    (if (string= default-entry "")
-		(error "No dict args given") default-entry) input))))
-  (url-retrieve (format "http://www.cnrtl.fr/definition/%s" word) 'trs-process-page ))
+  (interactive (list
+                (let* ((default-entry (trs-default-word-entry))
+                       (input
+                        (read-string
+                         (format
+                          "Mot à rechercher%s: "
+                          (if (string= default-entry "")
+                              ""
+                            (format " (défaut %s)" default-entry))))))
+                  (if (string= input "")
+                      (if (string= default-entry "")
+                          (error "No dict args given") default-entry) input))))
+  (url-retrieve (format "http://www.cnrtl.fr/definition/%s" word)
+                'trs-process-page ))
 
-(defun trs-preprocess-page( &rest args )
+(defun trs-preprocess-page(&rest args)
   (let ((buffer (current-buffer)))
     (set-buffer " trs-tarte")
     (insert-buffer-substring buffer)
