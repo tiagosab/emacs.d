@@ -1,0 +1,20 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: New window does not show up at the beginning of the buffer.
+desc: |-
+  When you invoke 'robert', a new window pops up. But the cursor
+  is at the end of the buffer, not at the beginning.
+type: :bugfix
+component: robert
+release: 
+reporter: Tiago Saboga <tiagosaboga@gmail.com>
+status: :unstarted
+disposition: 
+creation_time: 2009-05-10 13:49:57.622077 Z
+references: []
+
+id: b6a2d634378e9398699825e7ece14757ec18c7ef
+log_events: 
+- - 2009-05-10 13:50:01.978177 Z
+  - Tiago Saboga <tiagosaboga@gmail.com>
+  - created
+  - ""

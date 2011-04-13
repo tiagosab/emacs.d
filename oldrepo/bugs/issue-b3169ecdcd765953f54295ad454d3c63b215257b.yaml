@@ -1,0 +1,20 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Verses are filled as paragraphs
+desc: |-
+  Verses in quotations are not recognized as verses, and are filled like
+  single paragraphs.
+type: :bugfix
+component: tresor
+release: 
+reporter: Herio
+status: :unstarted
+disposition: 
+creation_time: 2009-04-12 01:41:24.748587 Z
+references: []
+
+id: b3169ecdcd765953f54295ad454d3c63b215257b
+log_events: 
+- - 2009-04-12 01:41:35.571897 Z
+  - Tiago Saboga <tiagosaboga@gmail.com>
+  - created
+  - ""
