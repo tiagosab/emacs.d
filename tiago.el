@@ -1,1 +1,1 @@
-../../src/elisp/repo/tiago.el
+ts-goodies/tiago.el

@@ -1,1 +1,1 @@
-/home/tiago/src/elisp/repo/imp-buffers.el
+ts-goodies/imp-buffers.el

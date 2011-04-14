@@ -1,1 +1,1 @@
-../../src/elisp/repo/tresor.el
+ts-goodies/tresor.el

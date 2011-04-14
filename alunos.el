@@ -1,1 +1,1 @@
-../../src/elisp/repo/alunos.el
+ts-goodies/alunos.el
