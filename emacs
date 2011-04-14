@@ -9,12 +9,15 @@
 
 (when (fboundp 'blink-cursor-mode)
   (blink-cursor-mode -1))
-(setq hl-line-sticky-flag t)
-(global-hl-line-mode nil)
+;(setq hl-line-sticky-flag t)
+;(global-hl-line-mode nil)
 ;(set-face-background 'hl-line "RoyalBlue4")
 ;(set-face-background 'hl-line "gray")
-(set-face-background 'hl-line "gray12")
-(set-face-foreground 'hl-line nil)
+;(set-face-background 'hl-line "gray12")
+;(set-face-foreground 'hl-line nil)
+
+;
+(setq message-log-max 1000)
 
 (defun ts-next-hl-line-face-background ()
   (interactive)
@@ -35,7 +38,7 @@
             new))
     (message (concat "New hl-line background: " new))
     (set-face-background 'hl-line new)))
-  
+
 (global-set-key (kbd "C-c C-ç") 'ts-next-hl-line-face-background)
 
 ;; display the current time
@@ -83,8 +86,8 @@
 ;;(setq load-path (cons "~/lib/emacs" load-path))
 (add-to-list 'load-path "~/lib/emacs")
 (add-to-list 'load-path "~/lib/emacs/http")
-(add-to-list 'load-path "~/lib/emacs/ljupdate-read-only/")
-(add-to-list 'load-path "~/etc/emacs.d")
+(add-to-list 'load-path "~/lib/emacs/ljupdate")
+; (add-to-list 'load-path "~/etc/emacs.d")
 
 ; load my general-purpose library
 (load-library "tiago")
