@@ -4,3 +4,6 @@
 [submodule "eldonkey"]
 	path = eldonkey
 	url = file:///home/tiago/src/elisp/eldonkey/
+[submodule "ljupdate"]
+	path = ljupdate
+	url = git://github.com/hober/ljupdate.git
