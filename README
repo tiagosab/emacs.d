@@ -1,0 +1,7 @@
+This is my main emacs config dir. There are still some libraries
+hanging around in my disk, but I intend to keep everything here from
+now on.
+
+For everything to work, I have only a symbolic link from ~/.emacs to
+/path/to/repo/emacs. There are some hard-coded paths around, removing
+them is my to-do list (but low-priority).
