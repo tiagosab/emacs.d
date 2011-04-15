@@ -6,11 +6,11 @@
 
 (defun ts-emacs ()
   (interactive)
-  (find-file "/home/tiago/etc/emacs"))
+  (find-file "/home/tiago/.emacs"))
 
 (defun ts-ts ()
   (interactive)
-  (find-file "/home/tiago/src/elisp/repo/tiago.el"))
+  (find-file "/home/tiago/lib/emacs/ts-goodies/tiago.el"))
 
 (defun ts-ip ()
   (interactive)
@@ -638,3 +638,26 @@ Otherwise, display it in another buffer."
   (dolist (ov (overlays-in (point-min) (point-max)))
     (if (eq (overlay-get ov 'category) 'comment)
         (delete-overlay ov))))
+
+(defun ts-next-hl-line-face-background ()
+  (interactive)
+  (let ((current (face-background 'hl-line))
+        (colors '("gray" "gray12"))
+        (new nil))
+    (setq new
+          (let ((first (car colors)))
+            (while colors
+              (let ((color (car colors)))
+                (setq colors (cdr colors))
+                (when (string-match current color)
+                  (setq new (nth 0 colors))
+                  (setq colors ())
+                  )))
+            (if (not new)
+                (setq new first))
+            new))
+    (message (concat "New hl-line background: " new))
+    (set-face-background 'hl-line new)))
+
+(global-set-key (kbd "C-c C-ç") 'ts-next-hl-line-face-background)
+

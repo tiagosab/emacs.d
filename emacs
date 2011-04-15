@@ -3,12 +3,22 @@
 (setq user-full-name "Tiago Saboga")
 (setq user-mail-address "tiagosaboga@gmail.com")
 
+;;; Emacs Load Path
+;;(setq load-path (cons "~/lib/emacs" load-path))
+(let ((default-directory "~/lib/emacs"))
+  (normal-top-level-add-to-load-path '("."))
+  (normal-top-level-add-subdirs-to-load-path))
+
 ;; ===========================
 ;; General interface settings
 ;; ===========================
 
+; I like traditional whole-char cursor
 (when (fboundp 'blink-cursor-mode)
   (blink-cursor-mode -1))
+
+; I would turn hl-line on if it could use different colors
+; on X and on the console.
 ;(setq hl-line-sticky-flag t)
 ;(global-hl-line-mode nil)
 ;(set-face-background 'hl-line "RoyalBlue4")
@@ -16,30 +26,8 @@
 ;(set-face-background 'hl-line "gray12")
 ;(set-face-foreground 'hl-line nil)
 
-;
+; Max size of buffer log
 (setq message-log-max 1000)
-
-(defun ts-next-hl-line-face-background ()
-  (interactive)
-  (let ((current (face-background 'hl-line))
-        (colors '("gray" "gray12"))
-        (new nil))
-    (setq new
-          (let ((first (car colors)))
-            (while colors
-              (let ((color (car colors)))
-                (setq colors (cdr colors))
-                (when (string-match current color)
-                  (setq new (nth 0 colors))
-                  (setq colors ())
-                  )))
-            (if (not new)
-                (setq new first))
-            new))
-    (message (concat "New hl-line background: " new))
-    (set-face-background 'hl-line new)))
-
-(global-set-key (kbd "C-c C-ç") 'ts-next-hl-line-face-background)
 
 ;; display the current time
 (display-time)
@@ -81,13 +69,6 @@
 (recentf-mode 1)
 (setq recentf-max-menu-items 25)
 (global-set-key "\C-x\ \C-r" 'recentf-open-files)
-
-;;; Emacs Load Path
-;;(setq load-path (cons "~/lib/emacs" load-path))
-(add-to-list 'load-path "~/lib/emacs")
-(add-to-list 'load-path "~/lib/emacs/http")
-(add-to-list 'load-path "~/lib/emacs/ljupdate")
-; (add-to-list 'load-path "~/etc/emacs.d")
 
 ; load my general-purpose library
 (load-library "tiago")
@@ -524,98 +505,8 @@ when sending messages" t)
 (setq w3m-use-cookies t)
 (setq w3m-follow-redirection 20)
 
-;; ==============================
-;; Jabber
-;; ==============================
-
-(eval-after-load "jabber"
-  '(progn
-     (setq jabber-account-list '(
-                                 ("tiagosaboga@gmail.com"
-                                  (:network-server . "talk.google.com")
-                                  (:port . 443)
-                                  (:connection-type . ssl))))
-     (setq jabber-show-offline-contacts nil)
-     (set-face-attribute 'jabber-title-large nil
-                         :width 'expanded
-                         :height 1.5)
-     (set-face-attribute 'jabber-title-medium nil
-                         :height 1.5)))
-
-;; ==============================
-;; Emms / mpd
-;; ==============================
-
-; emms basic config
-
-; emms-setup provides four functions for automatic setup of emms.
-(require 'emms-setup)
-;(emms-minimalistic)
-; (emms-standard) ; use the standard default config
-(emms-all) ; use all stable features
-;(emms-devel)
-
-;; setup default players
-(emms-default-players)
-
-;; choose function used to find files; the info manual says simply
-;; that the -find function is faster and should be used if gnu find is
-;; present.
-(setq emms-source-file-directory-tree-function
-      'emms-source-file-directory-tree-find)
-
-;; where are my music files
-(setq emms-source-file-default-directory
-      "/extra/multimedia/musica/")
-
-; from http://dryice.name/blog/emacs/playing-media-files-within-emacs/
-(require 'emms-player-mpd)
-(setq emms-player-mpd-server-name "localhost")
-(setq emms-player-mpd-server-port "6600")
-(add-to-list 'emms-info-functions 'emms-info-mpd)
-(add-to-list 'emms-player-list 'emms-player-mpd)
-(setq emms-player-mpd-music-directory "/extra/multimedia/musica/")
-
-(defun ts-file-is-in-mpd-dir (file)
-  (if (string-match (format "^%s" emms-player-mpd-music-directory)
-                    file)
-      t
-    nil))
-
-(defun ts-emms-play-file-no-mpd (file)
-  (setq emms-player-list (delete 'emms-player-mpd emms-player-list))
-  (message "%s" emms-player-list)
-  (emms-stop)
-  (emms-play-file file)
-  (add-to-list 'emms-player-list 'emms-player-mpd))
-
-(defun ts-dired-play-file-maybe-mpd (&optional filename)
-  (interactive)
-  (let ((file (or filename
-                  (dired-get-file-for-visit))))
-    (if (ts-file-is-in-mpd-dir file)
-        (emms-play-file file)
-      (ts-emms-play-file-no-mpd file))))
-
-(defun dired-advertised-find-file (&rest options)
-  "In dired, visit the file or directory named on this line,
-except if it is a known multimedia file, in which case play with
-emms."
-  (interactive)
-  (let ((find-file-run-dired t)
-        (file (dired-get-file-for-visit)))
-    (if (string-match ".*\\(mp3\\|ogg\\|flac\\)$"
-                      file)
-        (ts-dired-play-file-maybe-mpd file)
-      (find-file file))))
-
-;; library to download and save lyrics.  see also lyric-mode, which
-;; aids to write lrc files, lyrics with timings.
-;;
-;; http://www.google.com.br/custom?hl=pt&cof=&domains=letras.terra.com.br&
-;; q=chico+buarque+jumento&btnG=Pesquisar&sitesearch=letras.terra.com.br
-(load-library "emms-get-lyrics")
-
+(require 'setup-jabber)
+(require 'setup-sound)
 
 ;; ===========================
 ;; Load stuff
@@ -623,116 +514,12 @@ emms."
 
 (put 'erase-buffer 'disabled nil)
 
-;; ============================
-;; More Key mappings (others keys are mapped above).
-;; ============================
+(require 'setup-keyboard)
 
-(setq ctl-ç-map (make-sparse-keymap))
-(defalias 'ctl-ç-prefix ctl-ç-map)
-(global-set-key (kbd "C-ç") 'ctl-ç-prefix)
-(define-key ctl-ç-map "(" 'ts-corr-paren)
-(define-key ctl-ç-map "[" 'ts-corr-brack)
-(define-key ctl-ç-map "{" 'ts-corr-curl)
-
-(setq super-dict-map (make-sparse-keymap))
-(defalias 'super-d-prefix super-dict-map)
-(global-set-key (kbd "s-d") 'super-d-prefix)
-(define-key super-dict-map "d" 'dict)
-(define-key super-dict-map "t" 'tresor)
-(define-key super-dict-map "r" 'robert)
-
-
-(global-set-key (kbd "s-t") 'tresor)
-(global-set-key (kbd "s-w") 'w3m)
-(global-set-key (kbd "C--") 'undo)
-
-; quick help on help
-(define-key help-map "h"
-  (lambda ()
-    (interactive)
-    (message
-     (concat "a commands; b bindings; c key command; "
-             "f function; F command manual; i info;\n"
-             "k key command docs; K key command manual; "
-             "l lossage; m mode docs; p packages; r emacs manual"))))
-
-;; use F1 key to go to a man page
-(global-set-key [f1] 'man)
-;; use F3 key to kill current buffer
-(global-set-key [f3] 'kill-this-buffer)
-;; use F5 to get help (apropos)
-(global-set-key [f5] 'apropos)
-;; use F9 to open files in hex mode
-(global-set-key [f9] 'hexl-find-file)
-
-;; goto line function C-c C-g
-(global-set-key [ (control c) (control g) ] 'goto-line)
-(global-set-key [ (meta /) ] 'hippie-expand)
-
-;; I kept changing C-x C-d and C-x d (list-directory). Now they are
-;; the same: why use list-directory if you have dired?.
-(global-set-key [ (control x) (control d) ] 'dired)
-
-;; easy commenting out of lines
-(autoload 'comment-out-region "comment" nil t)
-(global-set-key "\C-cq" 'comment-out-region)
-
-(global-set-key "\C-xf" 'find-function)
-(global-set-key "\C-x\M-f" 'find-library)
-
-(global-set-key (kbd "A-x A-r") 'ts-find-alternative-file-with-sudo)
-
-;; use view-mode instead of just toggling read-only flag
-(global-set-key (kbd "C-x C-q") 'view-mode)
-
+;; what the hell is that?
 (put 'narrow-to-page 'disabled nil)
-
 (put 'narrow-to-region 'disabled nil)
-
 (put 'downcase-region 'disabled nil)
 
-;; ===========================
-;; Wanderlust
-;; ===========================
-
-;; wanderlust
-(autoload 'wl "wl" "Wanderlust" t)
-(autoload 'wl-other-frame "wl" "Wanderlust on new frame." t)
-(autoload 'wl-draft "wl-draft" "Write draft with Wanderlust." t)
-
-;; IMAP
-(setq elmo-imap4-default-server "imap.gmail.com")
-(setq elmo-imap4-default-user "tiagosaboga@gmail.com") 
-(setq elmo-imap4-default-authenticate-type 'clear) 
-(setq elmo-imap4-default-port '993)
-(setq elmo-imap4-default-stream-type 'ssl)
-
-(setq elmo-imap4-use-modified-utf7 t) 
-
-;; SMTP
-(setq wl-smtp-connection-type 'starttls)
-(setq wl-smtp-posting-port 587)
-(setq wl-smtp-authenticate-type "plain")
-(setq wl-smtp-posting-user "tiagosaboga@gmail.com")
-(setq wl-smtp-posting-server "smtp.gmail.com")
-(setq wl-local-domain "gmail.com")
-
-(setq wl-default-folder "%inbox")
-(setq wl-default-spec "%")
-(setq wl-draft-folder "%[Gmail]/Drafts") ; Gmail IMAP
-(setq wl-trash-folder "%[Gmail]/Trash")
-
-(setq wl-folder-check-async t)
-
-(setq elmo-imap4-use-modified-utf7 t)
-
-(autoload 'wl-user-agent-compose "wl-draft" nil t)
-(if (boundp 'mail-user-agent)
-    (setq mail-user-agent 'wl-user-agent))
-(if (fboundp 'define-mail-user-agent)
-    (define-mail-user-agent
-      'wl-user-agent
-      'wl-user-agent-compose
-      'wl-draft-send
-      'wl-draft-kill
-      'mail-send-hook))
+(require 'setup-wanderlust)
+(require 'setup-hideshow-org)
