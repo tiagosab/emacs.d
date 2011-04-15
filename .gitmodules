@@ -7,3 +7,6 @@
 [submodule "ljupdate"]
 	path = ljupdate
 	url = git://github.com/hober/ljupdate.git
+[submodule "hideshow-org"]
+	path = hideshow-org
+	url = git://github.com/secelis/hideshow-org.git
