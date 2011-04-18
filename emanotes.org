@@ -1,0 +1,22 @@
+* Dired mode
+- Wdired (wdired-mode) allows you to directly edit file names and
+  permissions.
+- Dired omit mode: automatically hide some files.
+** Marks
+- m - mark individual files
+- %m - mark regexp
+- %m RET - mark all files
+- %g - mark files containing regexp
+- t - toggle marks
+- \*. - dired-mark-extension - mark files by extension
+** Search
+- Q - query-replace-regexp on marked files
+- find-grep-dired - find all files containing regexp
+- find-name-dired - find all files whose names match shell pattern
+- find-dired - generic frontend
+* Org
+** Navigation
+If you want to search for something else without losing current
+layout, see command *org-goto*
+* Things to see
+- [[http://tromey.com/elpa/][elpa]] - emacs package management system
