@@ -10,3 +10,6 @@
 [submodule "hideshow-org"]
 	path = hideshow-org
 	url = git://github.com/secelis/hideshow-org.git
+[submodule "egg"]
+	path = egg
+	url = git://github.com/byplayer/egg.git
