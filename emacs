@@ -10,7 +10,7 @@
   (normal-top-level-add-subdirs-to-load-path))
 
 ;; ===========================
-;; General interface settings
+;; Visual interface settings
 ;; ===========================
 
 ; I like traditional whole-char cursor
@@ -26,9 +26,6 @@
 ;(set-face-background 'hl-line "gray12")
 ;(set-face-foreground 'hl-line nil)
 
-; Max size of buffer log
-(setq message-log-max 1000)
-
 ;; display the current time
 (display-time)
 
@@ -41,24 +38,18 @@
 (scroll-bar-mode -1)
 (fringe-mode -1)
 
-;; fullscreen
-(defun toggle-fullscreen (&optional f)
-  (interactive)
-  (let ((current-value (frame-parameter nil 'fullscreen)))
-    (set-frame-parameter nil 'fullscreen
-                         (if (equal 'fullboth current-value)
-                             (if (boundp 'old-fullscreen) old-fullscreen nil)
-                           (progn (setq old-fullscreen current-value)
-                                  'fullboth)))))
-; this is useful when not running a tiling window manager
-; (add-hook 'after-make-frame-functions 'toggle-fullscreen)
-
-(setq mouse-yank-at-point t)
-
 ;; black background - moved to Xresources/Xdefaults
 
 ;; format the title-bar to always include the buffer name
 (setq frame-title-format "emacs - %b")
+
+
+
+
+; Yank at point instead of at click
+(setq mouse-yank-at-point t)
+
+
 
 ;; alias y to yes and n to no
 (defalias 'yes-or-no-p 'y-or-n-p)
@@ -72,7 +63,12 @@
 
 ; load my general-purpose library
 (load-library "tiago")
-(global-set-key (kbd "C-x g") 'ts-gnus)
+; I'm back to mutt; imap on emacs requires offlineimap, and I am not 
+; willing to set this up now.
+;(global-set-key (kbd "C-x g") 'ts-gnus)
+
+; Max size of buffer log
+(setq message-log-max 1000)
 
 ; make scripts executable when saving
 (add-hook 'after-save-hook
@@ -91,44 +87,8 @@
                     (message (concat "Saved as script: " buffer-file-name))))))
 
 ; where should emacs find its C source file
-(setq find-function-C-source-directory
-      "/usr/local/src/debian-packages/emacs-snapshot-20090725/src")
-
-; work around bug: when activating menu-bar in a tiling wm, minibuffer
-; is no longer visible; does not work.
-(add-hook 'menu-bar-mode-on-hook
-          (lambda ()
-            (set-frame-height nil 35)))
-
-;;From Herio: 2011-03-29
-;Change cutting behaviour: if you press copy or cut when no region is
-;active you'll copy or cut the current line:"
-(defadvice kill-ring-save (before slickcopy activate compile)
-  "When called interactively with no active region, copy a single
-line instead."
-  (interactive
-   (if mark-active (list (region-beginning) (region-end))
-     (list (line-beginning-position)
-           (line-beginning-position 2)))))
-
-(defadvice kill-region (before slickcut activate compile)
-  "When called interactively with no active region, kill a single
-line instead."
-  (interactive
-   (if mark-active (list (region-beginning) (region-end))
-     (list (line-beginning-position)
-           (line-beginning-position 2)))))
-
-(defun hs-copy-rectangle (start end &optional fill)
-  "Save the rectangle as if killed, but don't kill it.  See
-`kill-rectangle' for more information."
-  (interactive "r\nP")
-  (kill-rectangle start end fill)
-  (goto-char start)
-  (yank-rectangle))
-
-(global-set-key (kbd "C-x r M-w") 'hs-copy-rectangle)
-;;End From Herio
+;(setq find-function-C-source-directory
+;      "/usr/local/src/debian-packages/emacs-snapshot-20090725/src")
 
 ; abbrevs for find-file
 ;
@@ -514,6 +474,7 @@ when sending messages" t)
 
 (put 'erase-buffer 'disabled nil)
 
+(require 'setup-myfiles)
 (require 'setup-keyboard)
 
 ;; what the hell is that?

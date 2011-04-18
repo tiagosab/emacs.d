@@ -1,86 +1,12 @@
-(provide 'tiago)
-
-;;
-;; Quick access to some files
-;;
-
-(defun ts-emacs ()
-  (interactive)
-  (find-file "/home/tiago/.emacs"))
-
-(defun ts-ts ()
-  (interactive)
-  (find-file "/home/tiago/lib/emacs/ts-goodies/tiago.el"))
+;; this file contains functions that should mostly be organized
+;; somewhere else.
 
 (defun ts-ip ()
+  "Discover current ip.
+
+Implemented before 2011-04-18."
   (interactive)
   (browse-url-emacs "http://www.whatismyip.com/automation/n09230945.asp"))
-
-(require 'ipython)
-(defun ts-open-dacdoc ()
-  (interactive)
-  (find-file "/home/tiago/src/paudearara/docdac/dacdoc.py")
-  (find-file "/home/tiago/src/paudearara/sabase/sabase.py")
-  (w3m "file:///usr/share/doc/python2.6-doc/html/index.html")
-  (dired "/home/tiago/src/paudearara")
-  (with-current-buffer "paudearara|tiago/src"
-    (dired-maybe-insert-subdir "qt_design")
-    (dired-maybe-insert-subdir "sabase")
-    (dired-maybe-insert-subdir "docdac/ui")
-    (dired-maybe-insert-subdir "docdac"))
-  (py-shell))
-
-(defun ts-sabase-test ()
-  (interactive)
-  (shell-command "/home/tiago/src/paudearara/sabase.py -t &"))
-
-(defun ts-sabase-mkt ()
-  (interactive)
-  (shell-command "/home/tiago/src/paudearara/sabase.py -mkt &"))
-
-(defun ts-dacdoc-t ()
-  (interactive)
-  (shell-command "call-dacdoc.py -t &"))
-
-(defun ts-alunos ()
-  (interactive)
-  (find-file "/home/tiago/src/elisp/repo/alunos.el"))
-
-(defun ts-latex ()
-  (interactive)
-  (find-file "/home/tiago/var/rautu/latex.tex"))
-
-(defun ts-gramatica ()
-  (interactive)
-  (dired "/home/tiago/home/portugues"))
-
-(defun ts-mldonkey ()
-  (interactive)
-  (dired "/srv/mldonkey/incoming/files"))
-
-(defun ts-concursos ()
-  (interactive)
-  (dired "/home/tiago/comuna/concursos/estudos"))
-
-(require 'a2r)
-(defun ts-machado ()
-  (interactive)
-  (find-file
-   "/home/tiago/comuna/concursos/estudos/português/machado-esau-jaco.txt")
-  (delete-other-windows)
-  (end-of-buffer)
-  (re-search-backward "^\\(\[0-9\]\\{1,2\\}\\)$")
-  (next-line)
-  (let ((number (match-string 1)))
-    (find-file-other-window
-     "/home/tiago/comuna/concursos/estudos/português/textos/esau-e-jaco.txt")
-    (view-mode t)
-    (ts-auto-view-mode)
-    (beginning-of-buffer)
-    (when number
-      (re-search-forward
-       (format "CAPÍTULO\[ \]*%s" (arabic-to-roman (string-to-number number))))
-      (recenter 1))))
 
 ;; source: http://steve.yegge.googlepages.com/my-dot-emacs-file
 (defun ts-rename-file-and-buffer (new-name)
@@ -661,3 +587,47 @@ Otherwise, display it in another buffer."
 
 (global-set-key (kbd "C-c C-ç") 'ts-next-hl-line-face-background)
 
+;; fullscreen
+(defun ts-toggle-fullscreen (&optional f)
+  (interactive)
+  (let ((current-value (frame-parameter nil 'fullscreen)))
+    (set-frame-parameter nil 'fullscreen
+                         (if (equal 'fullboth current-value)
+                             (if (boundp 'old-fullscreen) old-fullscreen nil)
+                           (progn (setq old-fullscreen current-value)
+                                  'fullboth)))))
+
+; this is useful when not running a tiling window manager
+; (add-hook 'after-make-frame-functions 'ts-toggle-fullscreen)
+
+;;From Herio: 2011-03-29
+;Change cutting behaviour: if you press copy or cut when no region is
+;active you'll copy or cut the current line:"
+(defadvice kill-ring-save (before slickcopy activate compile)
+  "When called interactively with no active region, copy a single
+line instead."
+  (interactive
+   (if mark-active (list (region-beginning) (region-end))
+     (list (line-beginning-position)
+           (line-beginning-position 2)))))
+
+(defadvice kill-region (before slickcut activate compile)
+  "When called interactively with no active region, kill a single
+line instead."
+  (interactive
+   (if mark-active (list (region-beginning) (region-end))
+     (list (line-beginning-position)
+           (line-beginning-position 2)))))
+
+(defun hs-copy-rectangle (start end &optional fill)
+  "Save the rectangle as if killed, but don't kill it.  See
+`kill-rectangle' for more information."
+  (interactive "r\nP")
+  (kill-rectangle start end fill)
+  (goto-char start)
+  (yank-rectangle))
+
+(global-set-key (kbd "C-x r M-w") 'hs-copy-rectangle)
+;;End From Herio
+
+(provide 'tiago)
