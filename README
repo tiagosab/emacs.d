@@ -5,3 +5,6 @@ now on.
 For everything to work, I have only a symbolic link from ~/.emacs to
 /path/to/repo/emacs. There are some hard-coded paths around, removing
 them is my to-do list (but low-priority).
+
+It's also necessary to pull the submodules, but I have to review what
+command is necessary.
