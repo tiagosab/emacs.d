@@ -222,6 +222,10 @@
 (load-file "/home/tiago/etc/sensible-data/mldonkey.el")
 (require 'eldonkey)
 
+; Color matching parens
+(require 'rainbow-delimiters)
+(add-hook 'emacs-lisp-mode-hook 'rainbow-delimiters-mode)
+(add-hook 'python-mode-hook 'rainbow-delimiters-mode)
 ; (load-library "mldonkey-config")
 
 ;;; load debian copyright mode
