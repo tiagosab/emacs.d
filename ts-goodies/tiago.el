@@ -600,7 +600,7 @@ Otherwise, display it in another buffer."
 ; this is useful when not running a tiling window manager
 ; (add-hook 'after-make-frame-functions 'ts-toggle-fullscreen)
 
-;;From Herio: 2011-03-29
+;;From hs: 2011-03-29
 ;Change cutting behaviour: if you press copy or cut when no region is
 ;active you'll copy or cut the current line:"
 (defadvice kill-ring-save (before slickcopy activate compile)
@@ -628,6 +628,20 @@ line instead."
   (yank-rectangle))
 
 (global-set-key (kbd "C-x r M-w") 'hs-copy-rectangle)
-;;End From Herio
+;;End From hs
+
+;;From hs: 2011-05-11
+(defun hs-da-match-paren (arg)
+  "Go to the matching paren if on a paren."
+  (interactive "p")
+  (cond ((and mark-active (looking-at "\\s\(")) (forward-list 1))
+        ((and mark-active (looking-back "\\s\)")) (backward-list 1))
+        ((looking-at "\\s\(") (forward-list 1) (backward-char 1))
+        ((looking-at "\\s\)") (forward-char 1) (backward-list 1))
+        )
+  )
+
+(global-set-key (kbd "M-[") 'hs-da-match-paren)
+;;End From hs
 
 (provide 'tiago)
