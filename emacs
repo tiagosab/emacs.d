@@ -227,6 +227,12 @@
 (add-hook 'emacs-lisp-mode-hook 'rainbow-delimiters-mode)
 (add-hook 'python-mode-hook 'rainbow-delimiters-mode)
 
+; Open all urls with w3m.
+(defun ts-browse-url-w3m (url &rest args)
+  "Open url with w3m."
+  'w3m-browse-url)
+(setq browse-url-browser-function 'ts-browse-url-w3m)
+
 ; (load-library "mldonkey-config")
 
 ;;; load debian copyright mode
