@@ -18,5 +18,19 @@
 ** Navigation
 If you want to search for something else without losing current
 layout, see command *org-goto*
-* Things to see
+* Git
+- C-x v - main vc map
+- C-x v v - next action
+** Magit
+On magit-status buffer:
+- s - stage current thing (file or chunk or region)
+- k - kill (discard) current thing
+- u - unstage current thing
+- P - magit-push - git push
+- magit-pull
+On magit-log buffer:
+- C-c C-a - Turn current commit into amend.
+* Things to do, learn, search
 - [[http://tromey.com/elpa/][elpa]] - emacs package management system
+** Info
+Learn how to use effectively the info system.

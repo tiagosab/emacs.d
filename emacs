@@ -226,6 +226,7 @@
 (require 'rainbow-delimiters)
 (add-hook 'emacs-lisp-mode-hook 'rainbow-delimiters-mode)
 (add-hook 'python-mode-hook 'rainbow-delimiters-mode)
+
 ; (load-library "mldonkey-config")
 
 ;;; load debian copyright mode
