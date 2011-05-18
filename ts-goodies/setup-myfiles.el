@@ -23,11 +23,11 @@ Implemented on 2011-04-18."
 (require 'ipython)
 (defun ts-open-dacdoc ()
   (interactive)
-  (find-file "/home/tiago/src/paudearara/docdac/dacdoc.py")
-  (find-file "/home/tiago/src/paudearara/sabase/sabase.py")
+  (find-file "/home/tiago/src/paudearara/repo/docdac/dacdoc.py")
+  (find-file "/home/tiago/src/paudearara/repo/sabase/sabase.py")
   (w3m "file:///usr/share/doc/python2.6-doc/html/index.html")
-  (dired "/home/tiago/src/paudearara")
-  (with-current-buffer "paudearara|tiago/src"
+  (dired "/home/tiago/src/paudearara/repo")
+  (with-current-buffer "repo\\paudearara\\src"
     (dired-maybe-insert-subdir "qt_design")
     (dired-maybe-insert-subdir "sabase")
     (dired-maybe-insert-subdir "docdac/ui")
