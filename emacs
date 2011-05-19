@@ -26,6 +26,10 @@
 ;(set-face-background 'hl-line "gray12")
 ;(set-face-foreground 'hl-line nil)
 
+;; load zenburn color theme
+(require 'color-theme-zenburn)
+(color-theme-zenburn)
+
 ;; display the current time
 (display-time)
 
@@ -43,13 +47,8 @@
 ;; format the title-bar to always include the buffer name
 (setq frame-title-format "emacs - %b")
 
-
-
-
 ; Yank at point instead of at click
 (setq mouse-yank-at-point t)
-
-
 
 ;; alias y to yes and n to no
 (defalias 'yes-or-no-p 'y-or-n-p)
