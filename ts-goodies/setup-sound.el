@@ -2,12 +2,14 @@
 ;; Emms / mpd
 ;; ==============================
 
-; emms basic config
+;; emms basic config
 
-; emms-setup provides four functions for automatic setup of emms.
 (require 'emms-setup)
+
+;; emms-setup provides four functions for automatic setup of emms.
+
 ;(emms-minimalistic)
-; (emms-standard) ; use the standard default config
+;(emms-standard) ; use the standard default config
 (emms-all) ; use all stable features
 ;(emms-devel)
 
