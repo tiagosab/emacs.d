@@ -17,5 +17,5 @@
 	path = rainbow-delimiters
 	url = git://github.com/emacsmirror/rainbow-delimiters.git
 [submodule "zenburn-bbatsov"]
-	path = zenburn-bbatsov
+	path = zenburn
 	url = git://www.github.com/bbatsov/zenburn-emacs
