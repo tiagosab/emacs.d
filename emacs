@@ -477,7 +477,8 @@ when sending messages" t)
 (setq w3m-follow-redirection 20)
 
 (require 'setup-jabber)
-(require 'setup-sound)
+;; Disabling sound as emms is uninstallable in apt ;(
+;(require 'setup-sound)
 
 ;; ===========================
 ;; Load stuff
