@@ -26,13 +26,15 @@ Implemented on 2011-04-18."
   (find-file "/home/tiago/src/paudearara/repo/docdac/dacdoc.py")
   (find-file "/home/tiago/src/paudearara/repo/sabase/sabase.py")
   (w3m "file:///usr/share/doc/python2.6-doc/html/index.html")
+  (py-shell)
   (dired "/home/tiago/src/paudearara/repo")
   (with-current-buffer "repo\\paudearara\\src"
     (dired-maybe-insert-subdir "qt_design")
     (dired-maybe-insert-subdir "sabase")
     (dired-maybe-insert-subdir "docdac/ui")
-    (dired-maybe-insert-subdir "docdac"))
-  (py-shell))
+    (dired-maybe-insert-subdir "docdac")
+    (dired-maybe-insert-subdir "docs"))
+  (find-file "/home/tiago/src/paudearara/repo/docs/devel.org"))
 
 (defun ts-sabase-test ()
   (interactive)
