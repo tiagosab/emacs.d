@@ -217,6 +217,8 @@
 (require 'tc)
 (require 'stumpwm-mode)
 
+(require 'develock-py)
+
 (add-to-list 'load-path "~/lib/emacs/eldonkey/")
 (load-file "/home/tiago/etc/sensible-data/mldonkey.el")
 (require 'eldonkey)
