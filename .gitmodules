@@ -19,3 +19,9 @@
 [submodule "zenburn-bbatsov"]
 	path = zenburn
 	url = git://www.github.com/bbatsov/zenburn-emacs
+[submodule "emacs-ditz"]
+	path = emacs-ditz
+	url = git@github.com:tiagosab/emacs-ditz.git
+[submodule "debian-mr-copyright-mode"]
+	path = debian-mr-copyright-mode
+	url = git+ssh://git.debian.org/git/users/fourmond/debian-mr-copyright-mode.git
