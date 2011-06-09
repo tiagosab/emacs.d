@@ -25,3 +25,9 @@
 [submodule "debian-mr-copyright-mode"]
 	path = debian-mr-copyright-mode
 	url = git+ssh://git.debian.org/git/users/fourmond/debian-mr-copyright-mode.git
+[submodule "magit"]
+	path = magit
+	url = git://github.com/magit/magit.git
+[submodule "org-jekyll"]
+	path = org-jekyll
+	url = git://github.com/juanre/org-jekyll.git
