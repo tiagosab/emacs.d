@@ -2,12 +2,35 @@
 ;; My self
 (setq user-full-name "Tiago Saboga")
 (setq user-mail-address "tiagosaboga@gmail.com")
+(setq ts-library-dir (expand-file-name "~/lib/emacs"))
 
 ;;; Emacs Load Path
-;;(setq load-path (cons "~/lib/emacs" load-path))
-(let ((default-directory "~/lib/emacs"))
-  (normal-top-level-add-to-load-path '("."))
-  (normal-top-level-add-subdirs-to-load-path))
+
+(add-to-list 'load-path ts-library-dir)
+
+(let ((contents (directory-files ts-library-dir))
+      (default-directory ts-library-dir))
+  (dolist (file contents)
+    (when (and (string-match "\\`[[:alnum:]]" file)
+               ;; Avoid doing a `stat' when it isn't necessary
+               ;; because that can cause trouble when an NFS server
+               ;; is down.
+               (not (string-match "\\.elc?\\'" file))
+               (file-directory-p file))
+      (let ((expanded (expand-file-name file)))
+        (message "Appending to load-path")
+        (message expanded)
+        (add-to-list 'load-path expanded)))))
+
+; Load org-mode from git
+(add-to-list 'load-path
+             (concat ts-library-dir "/org-mode/lisp"))
+
+;; The following would be great, but append dirs to load-path
+;; instead of add at the beginning.
+; (let ((default-directory "~/lib/emacs"))
+;   (normal-top-level-add-to-load-path '("."))
+;   (normal-top-level-add-subdirs-to-load-path))
 
 ;; ===========================
 ;; Visual interface settings
@@ -213,6 +236,9 @@
 (add-to-list 'load-path "~/src/third-party/emacs-ditz/")
 (require 'ditz)
 
+; Unbelievable helper to git!
+(require 'magit)
+
 (require 'ljupdate)
 (require 'tc)
 (require 'stumpwm-mode)
@@ -270,7 +296,7 @@
       (fset 'view-file (symbol-function 'old)))))
 
 ; open file in external viewer (according to system configuration; see
-; man(1) run-mailcap
+; man(1) run-mailcap)
 (define-key dired-mode-map (kbd "s-s") 'ts-dired-external-see)
 
 (setq dired-guess-shell-alist-user
@@ -284,6 +310,7 @@
 ;; ===========================
 ;; Text mode
 ;; ===========================
+
 
 ;; turn on word wrapping in text mode
 (add-hook 'text-mode-hook 'turn-on-auto-fill)
@@ -403,47 +430,6 @@
        (add-hook 'LaTeX-mode-hook
                  (car hooks))
        (setq hooks (cdr hooks)))))
-
-;;; Mail
-
-; The default send-mail-function , sendmail-send-it, uses local
-; sendmail (which would be fine, since I have esmtp configured
-; locally), but it provides no way to add custom options to sendmail
-; (which I need, since my conf file is not in the normal place. So, I
-; have to use the internal smtp handler.
-
-;; (setq send-mail-function 'smtpmail-send-it)
-
-;; (setq mail-user-agent 'gnus-user-agent)
-;; (setq message-send-mail-function 'smtpmail-send-it)
-;;
-;; (setq message-directory "~/Gnumail/")
-
-; This is the prefix for temporary files used by gnus when downloading
-; files (in my case (the mail case), in fact, it just copies the
-; contents from files in another dir
-;; (setq mail-source-incoming-file-prefix "Incoming")
-; This chooses when to delete those temporary files; t is immediately,
-; nil is never, or a number of days. Default is nil in CVS, t in
-; released versions.
-;; (setq mail-source-delete-incoming nil)
-
-; configure smtp to use gmail.
-; (load-file "/home/tiago/etc/sensible-data/emacs-gmail.el")
-
-; nmh
-; (setq mh-recursive-folders-flag t)
-
-; directory from which all other Gnus file variables are derived.
-; must be set in .emacs instead of gnus.el
-; (setq gnus-directory "~/Gnumail/")
-
-; if gnus is not running, message-mode will store drafts in this
-; directory (under message-directory). They are now pointing to the
-; same place, what happens when one just sets gnus-directory and
-; message-directory to the same dir. Is this safe? "drafts" is the
-; default value.
-;; (setq message-auto-save-directory "drafts")
 
 ;; ==============================
 ;; BBdb
