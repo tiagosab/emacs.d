@@ -179,7 +179,7 @@ h / ? - display this help
         (overlay-put overlay 'face robert-citation-face)
         (overlay-put overlay 'cat cat)))))
 
-(defun rob-parse-citation-author (beg end cat)
+(defun rob-parse-citation-author (beg end cat is-a)
   (save-excursion
     (goto-char beg)
     (if (looking-back "[\n \t]*")
@@ -320,7 +320,7 @@ This guess is based on the text surrounding the cursor."
 
 (defun rob-toggle-definitions ()
   (interactive)
-  (rob-toggle-by-type '("tlf_cdefinition")))
+  (rob-toggle-by-type '("<e>")))
 
 (defun rob-toggle-syntagmes ()
   (interactive)
@@ -335,10 +335,9 @@ remarques, bibliographie, statistiques, étymologie)."
 (defun rob-toggle-minimal ()
   "Toggle visibility of every part but definitions and headers"
   (interactive)
-  (rob-toggle-by-type '("tlf_cexemple"
-                        "tlf_cauteur"
-                        "tlf_parsynt"
-                        "tlf_parothers")))
+  (rob-toggle-by-type '("<c>"
+                        "<a>"
+                        )))
 
 (defun rob-all-visible ()
   "View all parts of definition"
