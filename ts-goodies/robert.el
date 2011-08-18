@@ -161,12 +161,14 @@ h / ? - display this help
     (toggle-read-only t))
   (beginning-of-buffer))
 
-(defun rob-parse-citation(beg end cat)
+(defun rob-parse-citation(beg end cat is-a)
   (save-excursion
-    (let ((end (or (let ((end-marker (make-marker)))
-                     (re-search-forward "<a>" nil t)
-                     (set-marker end-marker (match-beginning 0)))
-                   end)))
+    (let
+        ((end (or (and is-a end)
+                  (let ((end-marker (make-marker)))
+                    (re-search-forward "<a>" nil t)
+                    (set-marker end-marker (match-beginning 0)))
+                  end)))
       (goto-char beg)
       (if (looking-back "[\n \t]*")
           (delete-region (match-beginning 0) (match-end 0)))
@@ -203,11 +205,15 @@ h / ? - display this help
   (beginning-of-buffer)
   (rob-parse-subtree robert-contents-categories-faces))
 
-(defun rob-apply-to-region (beg end cat-face tag-open)
-  ""
+(defun rob-apply-to-region (beg end cat-face tag-open &optional is-a)
+  "Apply face cat-face from beg point to end point, using
+tag-open as overlay name. As a special case, cat-face may be a
+function, which gets called. Non-nil is-a means that tag at
+point (already deleted) is <a> - this is only useful when
+cat-face is a function.."
   (when (car cat-face)
     (if (functionp (nth 1 cat-face))
-        (funcall (nth 1 cat-face) beg end tag-open)
+        (funcall (nth 1 cat-face) beg end tag-open is-a)
       (let ((overlay (make-overlay beg (point))))
         (overlay-put overlay 'face (nth 1 cat-face))
         (overlay-put overlay 'cat (nth 0 cat-face))))
@@ -221,16 +227,18 @@ h / ? - display this help
                                nil ; not bound
                                t ; if fail, move to limit (no error)
                                )
-      (let ((data (match-string 0)))
+      (let ((data (match-string 0))
+            (ending-tag-p (match-string 1)))
         (delete-region (match-beginning 0) (match-end 0))
         (let ((current (car subitems)))
           (let ((beg (car current))
                 (tag-open (or (car (cdr current))
                               ""))
                 (cat-face (car (cdr (cdr current)))))
-            (rob-apply-to-region beg (point-marker) cat-face tag-open)
+            (let ((is-a (equal data "<a>")))
+              (rob-apply-to-region beg (point-marker) cat-face tag-open is-a))
             (setq subitems (cdr subitems))
-            (if (not (match-string 1))
+            (if (not ending-tag-p)
                 (let ((item)
                       (counter 0))
                   (while (not item)
@@ -244,7 +252,9 @@ h / ? - display this help
                       (insert (nth 2 item)))
                   (setq subitems (cons (list (point-marker) data item)
                                        subitems)))
-              (message (match-string 1)))))))))
+              ;; (progn
+              ;;   (message (format "'%s'" data))
+                ))))))))
 
 (defun robert-test ()
   (interactive)
