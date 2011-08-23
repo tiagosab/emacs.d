@@ -254,7 +254,7 @@ cat-face is a function.."
                                        subitems)))
               ;; (progn
               ;;   (message (format "'%s'" data))
-                ))))))))
+                )))))))
 
 (defun robert-test ()
   (interactive)
