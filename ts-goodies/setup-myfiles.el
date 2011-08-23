@@ -20,6 +20,14 @@ Implemented on 2011-04-18."
   (find-file "/home/tiago/lib/emacs/emanotes.org"))
 ;; END first section
 
+(defun ts-concreto ()
+  (interactive)
+  (let ((concreto-buffer (dired "/home/tiago/h/c")))
+    (with-current-buffer concreto-buffer
+      (mapc 'dired-maybe-insert-subdir
+            '("concreto" "noticias" "meta"))
+      (goto-char (point-min)))))
+
 (require 'ipython)
 (defun ts-open-dacdoc ()
   (interactive)
