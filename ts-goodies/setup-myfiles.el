@@ -37,11 +37,8 @@ Implemented on 2011-04-18."
   (py-shell)
   (dired "/home/tiago/src/paudearara/repo")
   (with-current-buffer "repo\\paudearara\\src"
-    (dired-maybe-insert-subdir "qt_design")
-    (dired-maybe-insert-subdir "sabase")
-    (dired-maybe-insert-subdir "docdac/ui")
-    (dired-maybe-insert-subdir "docdac")
-    (dired-maybe-insert-subdir "docs"))
+    (mapc 'dired-maybe-insert-subdir
+          '"qt_design" "sabase" "docdac/ui" "docdac" "docs"))
   (find-file "/home/tiago/src/paudearara/repo/docs/devel.org"))
 
 (defun ts-sabase-test ()
