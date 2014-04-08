@@ -1,6 +1,18 @@
 ;; this file contains functions that should mostly be organized
 ;; somewhere else.
 
+(defun ts-n ()
+  "Start a search with # as starting char"
+  (interactive)
+  (add-hook 'isearch-mode-hook
+	    (lambda ()
+	      (setq isearch-mode-hook (cdr isearch-mode-hook)
+		    isearch-string "#"
+		    isearch-message "#"
+		    )
+	      (isearch-search-and-update)))
+  (isearch-forward))
+
 (defun ts-ip ()
   "Discover current ip.
 
