@@ -31,3 +31,9 @@
 [submodule "org-jekyll"]
 	path = org-jekyll
 	url = git://github.com/juanre/org-jekyll.git
+[submodule "org-mode"]
+	path = org-mode
+	url = https://github.com/org-mode.git
+[submodule "git-modes"]
+	path = git-modes
+	url = https://github.com/magit/git-modes.git
