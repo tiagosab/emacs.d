@@ -50,7 +50,9 @@
 ;(set-face-foreground 'hl-line nil)
 
 ;; load zenburn color theme
-;(require 'zenburn-theme)
+(require 'color-theme)
+(require 'zenburn-theme)
+;; This is the way it will be done in Emacs 24:
 ;(color-theme-zenburn)
 
 ;; display the current time
@@ -85,7 +87,7 @@
 
 ; load my general-purpose library
 (load-library "tiago")
-; I'm back to mutt; imap on emacs requires offlineimap, and I am not 
+; I'm back to mutt; imap on emacs requires offlineimap, and I am not
 ; willing to set this up now.
 ;(global-set-key (kbd "C-x g") 'ts-gnus)
 
