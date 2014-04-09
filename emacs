@@ -50,8 +50,8 @@
 ;(set-face-foreground 'hl-line nil)
 
 ;; load zenburn color theme
-(require 'color-theme-zenburn)
-(color-theme-zenburn)
+;(require 'zenburn-theme)
+;(color-theme-zenburn)
 
 ;; display the current time
 (display-time)
