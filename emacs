@@ -147,6 +147,9 @@
 ;; Basic editor settings
 ;; ==============================
 
+;; Set font size
+(set-face-attribute 'default nil :height 200)
+
 (setq large-file-warning-threshold 20000000
       tab-width 4)
 
