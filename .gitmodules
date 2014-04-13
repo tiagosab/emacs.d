@@ -37,3 +37,6 @@
 [submodule "git-modes"]
 	path = git-modes
 	url = https://github.com/magit/git-modes.git
+[submodule "offlineimap-el"]
+	path = offlineimap-el
+	url = git://git.naquadah.org/offlineimap-el.git
