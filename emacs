@@ -489,3 +489,34 @@ when sending messages" t)
 (require 'setup-wanderlust)
 (require 'setup-hideshow-org)
 
+;; ===========================
+;; Gnus
+;; ===========================
+
+;; Basics:
+; http://sachachua.com/blog/2008/05/geek-how-to-use-offlineimap-and-the-dovecot-mail-server-to-read-your-gmail-in-emacs-efficiently/
+;; More:
+; http://roland.entierement.nu/blog/2010/09/08/gnus-dovecot-offlineimap-search-a-howto.html
+
+;; (setq gnus-select-method
+;;       '(nnimap "Mail"
+;;                (nnimap-address "localhost")
+;;                (nnimap-stream network)
+;;                (nnimap-authenticator login)))
+
+(setq gnus-select-method
+      '(nnimap "Mail"
+               (nnimap-stream shell)
+               (imap-shell-program
+                "MAIL=maildir:$HOME/Maildir /usr/lib/dovecot/imap")))
+
+(setq gnus-summary-line-format
+      (concat "%U" ; status (unread mark)
+              "%R" ; replied mark
+              "|%z" ; zcore
+              "%~(cut-left 2)~(max-right 6)~(pad 6)o" ; date
+              "%(%[%4L: %-18,18f%]%)" ; from
+              " %>\\\\%s\n" ; subject
+              ))
+
+;(setq gnus-ignored-from-addresses "youraddress")
