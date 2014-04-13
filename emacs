@@ -51,7 +51,8 @@
 
 ;; load zenburn color theme
 (require 'color-theme)
-(require 'zenburn-theme)
+(require 'color-theme-zenburn)
+(color-theme-zenburn)
 ;; This is the way it will be done in Emacs 24:
 ;(color-theme-zenburn)
 
@@ -61,8 +62,7 @@
 ;; Show column number at bottom of screen
 (column-number-mode 1)
 
-;; no menu, no toolbar, no scrollbar, no fringes
-(menu-bar-mode -1)
+;; no toolbar, no scrollbar, no fringes
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
 (fringe-mode -1)
