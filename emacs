@@ -31,7 +31,7 @@
 ; (let ((default-directory "~/lib/emacs"))
 ;   (normal-top-level-add-to-load-path '("."))
 ;   (normal-top-level-add-subdirs-to-load-path))
-
+
 ;; ===========================
 ;; Visual interface settings
 ;; ===========================
@@ -142,7 +142,7 @@
 ;;           '(lambda ()
 ;;              (define-key minibuffer-local-completion-map
 ;;                " " 'geosoft-parse-minibuffer)))
-
+
 ;; ==============================
 ;; Basic editor settings
 ;; ==============================
@@ -207,7 +207,7 @@
 
 ; allow scrolling commands during incremental search
 (setq isearch-allow-scroll t)
-
+
 ;; ==============================
 ;; Major modes config
 ;; ==============================
@@ -273,7 +273,7 @@
 (autoload 'debian-mr-copyright-mode "debian-mr-copyright-mode"
   "Major mode for editing machine-readable copyright files (i.e. debian/copyright)."
   t)
-
+
 ;; ===========================
 ;; Dired
 ;; ===========================
@@ -322,7 +322,7 @@
 
 ;; turn on longlines-mode in text mode
 ;; (add-hook 'text-mode-hook 'longlines-mode)
-
+
 ;; ==============================
 ;; Ibuffer
 ;; ==============================
@@ -393,7 +393,7 @@
 
 ;; run this when fiddling with ibuffer hooks
 ;;(setq ibuffer-mode-hook nil)
-
+
 ;; ==============================
 ;;; Org-mode
 ;; ==============================
@@ -419,7 +419,7 @@
             ("\\paragraph{%s}" . "\\paragraph*{%s}")
             ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
           org-export-latex-classes)))
-
+
 ;; ==============================
 ;;; TeX / LaTeX / AucTeX
 ;; ==============================
@@ -435,7 +435,7 @@
        (add-hook 'LaTeX-mode-hook
                  (car hooks))
        (setq hooks (cdr hooks)))))
-
+
 ;; ==============================
 ;; BBdb
 ;; ==============================
@@ -460,7 +460,7 @@ when sending messages" t)
 ;(add-hook 'mail-send-hook 'bbdb/send-hook) ; For other mailers
 ;                                           ; (VM, Rmail)
 
-
+
 ;; ==============================
 ;; W3m
 ;; ==============================
@@ -471,7 +471,7 @@ when sending messages" t)
 (require 'setup-jabber)
 ;; Disabling sound as emms is uninstallable in apt ;(
 ;(require 'setup-sound)
-
+
 ;; ===========================
 ;; Load stuff
 ;; ===========================
@@ -488,3 +488,4 @@ when sending messages" t)
 
 (require 'setup-wanderlust)
 (require 'setup-hideshow-org)
+
