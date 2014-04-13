@@ -226,6 +226,7 @@ expand wildcards (if any) and visit multiple files."
           (if buffer-to-go
               (progn (switch-to-buffer buffer-to-go)
                      (setq buflist nil)
+                     (gnus-group-get-new-news)
                      (setq done t))
             (setq buflist (cdr buflist))))))
     (if (not done)
