@@ -309,6 +309,17 @@ Otherwise, display it in another buffer."
     (if (file-regular-p file)
         (start-process "see" nil "see" file))))
 
+(defun dired-w3m-find-file ()
+  (interactive)
+  (require 'w3m)
+  (let ((file (dired-get-filename)))
+    (if (y-or-n-p (format "Open 'w3m' %s " (file-name-nondirectory file)))
+        (w3m-find-file file))))
+
+(add-hook 'dired-mode-hook
+          (lambda ()
+            (define-key dired-mode-map "\C-xm" 'dired-w3m-find-file)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; python add-ons
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
