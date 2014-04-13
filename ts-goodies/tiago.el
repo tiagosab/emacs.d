@@ -1,6 +1,11 @@
 ;; this file contains functions that should mostly be organized
 ;; somewhere else.
 
+(defun t-hugges ()
+  "Show internet availability (Hugges FAP-meter)."
+  (interactive)
+  (shell-command "echo \"FAP-meter: $(tail -1 /var/log/hugges-fap.log)Mb\""))
+
 (defun ts-n ()
   "Start a search with # as starting char"
   (interactive)
