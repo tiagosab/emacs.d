@@ -1,6 +1,6 @@
 ;; mode:-*-emacs-lisp-*-
 ;; wanderlust
-; link: ~/wl
+; ts-link: ~/wl
 
 (setq
   elmo-maildir-folder-path "~/var/cache/offlineimap/mail";; where i store mail
