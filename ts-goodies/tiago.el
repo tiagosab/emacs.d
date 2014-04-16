@@ -23,7 +23,7 @@
 
 Implemented before 2011-04-18."
   (interactive)
-  (browse-url-emacs "http://www.whatismyip.com/automation/n09230945.asp"))
+  (browse-url-emacs "http://automation.whatismyip.com/n09230945.asp"))
 
 ;; source: http://steve.yegge.googlepages.com/my-dot-emacs-file
 (defun ts-rename-file-and-buffer (new-name)
