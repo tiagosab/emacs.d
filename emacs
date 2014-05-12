@@ -6,6 +6,17 @@
 
 ;;; Emacs Load Path
 
+(if (not (string-match "Debian" (emacs-version)))
+    (progn
+      (add-to-list 'load-path "/usr/share/emacs/site-lisp")
+      (load-library "debian-startup")
+      (debian-startup 'emacs24)))
+
+(if (< emacs-major-version 24)
+    (add-to-list 'load-path
+                 (concat ts-library-dir "/23to24"))
+  )
+
 (add-to-list 'load-path ts-library-dir)
 
 (let ((contents (directory-files ts-library-dir))
@@ -16,6 +27,7 @@
                ;; because that can cause trouble when an NFS server
                ;; is down.
                (not (string-match "\\.elc?\\'" file))
+               (not (string-match "23to24" file))
                (file-directory-p file))
       (let ((expanded (expand-file-name file)))
         (message "Appending to load-path")
@@ -245,7 +257,7 @@
 (require 'magit)
 
 (require 'ljupdate)
-(require 'tc)
+; # (require 'tc)
 (require 'stumpwm-mode)
 
 (require 'develock-py)
@@ -507,8 +519,11 @@ when sending messages" t)
 (setq gnus-select-method
       '(nnimap "Mail"
                (nnimap-stream shell)
+               (nnimap-shell-program
+                "MAIL=maildir:$HOME/Maildir /usr/lib/dovecot/imap")
                (imap-shell-program
-                "MAIL=maildir:$HOME/Maildir /usr/lib/dovecot/imap")))
+                "MAIL=maildir:$HOME/Maildir /usr/lib/dovecot/imap")
+               (nnimap-record-commands t)))
 
 (setq gnus-summary-line-format
       (concat "%U" ; status (unread mark)
@@ -520,3 +535,17 @@ when sending messages" t)
               ))
 
 ;(setq gnus-ignored-from-addresses "youraddress")
+
+
+;; ===========================
+
+;; ===========================
+;; Ido-mode
+;; ===========================
+
+; Keys to remember:
+; C-f when finding files switches to traditional find-file
+; (useful to run dired and to find new file)
+; C-e to edit current line
+(ido-mode t)
+(setq ido-enable-flex-matching t)
