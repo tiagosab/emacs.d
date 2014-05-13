@@ -18,6 +18,13 @@
 	      (isearch-search-and-update)))
   (isearch-forward))
 
+(defun t-bfi ()
+  "Archive BFI mail."
+  (interactive)
+  (let ((gnus-summary-pipe-output-default-command "recv-bfi.sh"))
+    (gnus-summary-pipe-output 1 'r))
+  (dired "/home/tiago/comuna/bfi"))
+
 (defun ts-ip ()
   "Discover current ip.
 
