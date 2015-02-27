@@ -8,11 +8,11 @@
 
 ;;; Emacs Load Path
 
-(if (not (string-match "Debian" (emacs-version)))
-    (progn
-      (add-to-list 'load-path "/usr/share/emacs/site-lisp")
-      (load-library "debian-startup")
-      (debian-startup 'emacs24)))
+;; (if (not (string-match "Debian" (emacs-version)))
+;;     (progn
+;;       (add-to-list 'load-path "/usr/share/emacs/site-lisp")
+;;       (load-library "debian-startup")
+;;       (debian-startup 'emacs24)))
 
 (if (< emacs-major-version 24)
     (add-to-list 'load-path
@@ -38,11 +38,10 @@
 (let ((contents (directory-files ts-emacs.d-dir))
       (default-directory ts-emacs.d-dir))
   (dolist (file contents)
-    (when (and (string-match "\\`[.-a-z0-9]*\\'" file)
+    (when (and (string-match "[.-a-z0-9]*el$" file)
                (file-exists-p file)
                (not (file-directory-p file)))
       (let ((expanded (expand-file-name file)))
-        (message (concat "Loading: " expanded))
         (load-file file)))))
 
 ;; The following would be great, but append dirs to load-path
@@ -53,3 +52,4 @@
 
 ; load my general-purpose library
 (load-library "tiago")
+

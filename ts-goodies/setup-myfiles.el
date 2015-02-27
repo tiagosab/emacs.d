@@ -28,7 +28,6 @@ Implemented on 2011-04-18."
             '("concreto" "noticias" "meta"))
       (goto-char (point-min)))))
 
-(require 'ipython)
 (defun ts-open-dacdoc ()
   (interactive)
   (find-file "/home/tiago/src/paudearara/repo/docdac/dacdoc.py")
