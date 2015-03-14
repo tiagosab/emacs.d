@@ -2,6 +2,8 @@
 (global-set-key (kbd "C-x g") 'mu4e)
 (global-set-key "\C-x\ \C-r" 'recentf-open-files)
 
+(global-unset-key (kbd "C-z"))
+
 (key-chord-mode 1)
 (setq key-chord-two-keys-delay 0.03)
 
