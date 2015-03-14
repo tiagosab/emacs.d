@@ -18,3 +18,6 @@
                       (chmod buffer-file-name
                              (logior mode 64))) ; add executable bit
                     (message (concat "Saved as script: " buffer-file-name))))))
+
+(require 'pymacs)
+(pymacs-load "ropemacs" "rope-")
