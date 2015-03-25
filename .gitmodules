@@ -1,9 +1,6 @@
 [submodule "nxhtml"]
 	path = nxhtml
 	url = https://github.com/emacsmirror/nxhtml.git
-[submodule "ljupdate"]
-	path = ljupdate
-	url = git://github.com/hober/ljupdate.git
 [submodule "zenburn-bbatsov"]
 	path = zenburn
 	url = git://www.github.com/bbatsov/zenburn-emacs
