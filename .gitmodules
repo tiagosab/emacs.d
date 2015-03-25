@@ -1,6 +1,3 @@
-[submodule "nxhtml"]
-	path = nxhtml
-	url = https://github.com/emacsmirror/nxhtml.git
 [submodule "zenburn-bbatsov"]
 	path = zenburn
 	url = git://www.github.com/bbatsov/zenburn-emacs
@@ -10,9 +7,6 @@
 [submodule "debian-mr-copyright-mode"]
 	path = debian-mr-copyright-mode
 	url = git+ssh://git.debian.org/git/users/fourmond/debian-mr-copyright-mode.git
-[submodule "org-mode"]
-	path = org-mode
-	url = https://github.com/org-mode.git
 [submodule "offlineimap-el"]
 	path = offlineimap-el
 	url = git://git.naquadah.org/offlineimap-el.git

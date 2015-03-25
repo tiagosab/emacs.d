@@ -17,6 +17,7 @@
         markdown-mode
         rainbow-delimiters
         rainbow-blocks
+        org
         )
       )
 
