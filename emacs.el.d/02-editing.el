@@ -6,7 +6,7 @@
 (setq next-line-add-newlines nil)
 
 ;; set utf8 input
-(set-keyboard-coding-system 'mule-utf-8)
+; (set-keyboard-coding-system 'mule-utf-8)
 
 ;; Enable syntax highlighting
 (global-font-lock-mode t)
