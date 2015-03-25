@@ -18,6 +18,8 @@
         rainbow-delimiters
         rainbow-blocks
         org
+        mediawiki
+        async
         )
       )
 

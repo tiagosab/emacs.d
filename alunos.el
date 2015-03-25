@@ -1,1 +1,0 @@
-ts-goodies/alunos.el
