@@ -340,10 +340,6 @@ Otherwise, display it in another buffer."
     (if (y-or-n-p (format "Open 'w3m' %s " (file-name-nondirectory file)))
         (w3m-find-file file))))
 
-(add-hook 'dired-mode-hook
-          (lambda ()
-            (define-key dired-mode-map "\C-xm" 'dired-w3m-find-file)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; python add-ons
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -632,8 +628,6 @@ Otherwise, display it in another buffer."
     (message (concat "New hl-line background: " new))
     (set-face-background 'hl-line new)))
 
-(global-set-key (kbd "C-c C-ç") 'ts-next-hl-line-face-background)
-
 ;; fullscreen
 (defun ts-toggle-fullscreen (&optional f)
   (interactive)
@@ -674,7 +668,6 @@ line instead."
   (goto-char start)
   (yank-rectangle))
 
-(global-set-key (kbd "C-x r M-w") 'hs-copy-rectangle)
 ;;End From hs
 
 ;;From hs: 2011-05-11
@@ -688,7 +681,6 @@ line instead."
         )
   )
 
-(global-set-key (kbd "M-[") 'hs-da-match-paren)
 ;;End From hs
 
 (provide 'tiago)

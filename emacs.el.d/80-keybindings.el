@@ -70,3 +70,11 @@
 
 ;; use view-mode instead of just toggling read-only flag
 (global-set-key (kbd "C-x C-q") 'view-mode)
+
+;; tiago library shortcuts
+(global-set-key (kbd "C-ç ]") 'hs-da-match-paren)
+(global-set-key (kbd "C-x r M-w") 'hs-copy-rectangle)
+(add-hook 'dired-mode-hook
+          (lambda ()
+            (define-key dired-mode-map "\C-xm" 'dired-w3m-find-file)))
+(global-set-key (kbd "C-c C-ç") 'ts-next-hl-line-face-background)

@@ -49,7 +49,3 @@
 ; (let ((default-directory "~/lib/emacs"))
 ;   (normal-top-level-add-to-load-path '("."))
 ;   (normal-top-level-add-subdirs-to-load-path))
-
-; load my general-purpose library
-(load-library "tiago")
-
