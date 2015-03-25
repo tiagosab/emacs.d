@@ -1,21 +1,9 @@
 [submodule "nxhtml"]
 	path = nxhtml
 	url = https://github.com/emacsmirror/nxhtml.git
-[submodule "eldonkey"]
-	path = eldonkey
-	url = file:///home/tiago/src/elisp/eldonkey/
 [submodule "ljupdate"]
 	path = ljupdate
 	url = git://github.com/hober/ljupdate.git
-[submodule "hideshow-org"]
-	path = hideshow-org
-	url = git://github.com/secelis/hideshow-org.git
-[submodule "egg"]
-	path = egg
-	url = git://github.com/byplayer/egg.git
-[submodule "rainbow-delimiters"]
-	path = rainbow-delimiters
-	url = git://github.com/emacsmirror/rainbow-delimiters.git
 [submodule "zenburn-bbatsov"]
 	path = zenburn
 	url = git://www.github.com/bbatsov/zenburn-emacs
@@ -25,18 +13,9 @@
 [submodule "debian-mr-copyright-mode"]
 	path = debian-mr-copyright-mode
 	url = git+ssh://git.debian.org/git/users/fourmond/debian-mr-copyright-mode.git
-[submodule "magit"]
-	path = magit
-	url = git://github.com/magit/magit.git
-[submodule "org-jekyll"]
-	path = org-jekyll
-	url = git://github.com/juanre/org-jekyll.git
 [submodule "org-mode"]
 	path = org-mode
 	url = https://github.com/org-mode.git
-[submodule "git-modes"]
-	path = git-modes
-	url = https://github.com/magit/git-modes.git
 [submodule "offlineimap-el"]
 	path = offlineimap-el
 	url = git://git.naquadah.org/offlineimap-el.git

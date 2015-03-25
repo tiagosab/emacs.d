@@ -9,17 +9,25 @@
         git-blame
         key-chord
         bts-github
+        git-commit-mode
+        git-rebase-mode
+        gitconfig-mode
+        gitignore-mode
+        magit
+        markdown-mode
+        rainbow-delimiters
+        rainbow-blocks
         )
       )
 
 
 ; It must exist a way to say to package-install/paradox to install
-; these packages and its dependencies. For now I am adding 'all,
+; these packages and its dependencies. For now I let just '(all),
 ; but I'd rather not.
 
-(let ((packlist
-       (mapcar (lambda (value) "Doc" `(,value t)) ts-my-packages)))
-  (setq package-load-list (add-to-list 'packlist 'all t)))
+(setq package-load-list
+      (mapcar (lambda (value) "Doc" `(,value t)) ts-my-packages))
+(setq package-load-list '(all))
 
 (package-initialize)
 (setq package-enable-at-startup nil)
@@ -27,10 +35,4 @@
 (if (not (require 'paradox "paradox" t))
     (package-install 'paradox))
 
-(paradox-require 'adoc-mode)
-(paradox-require 'gh)
-(paradox-require 'gist)
-(paradox-require 'git-blame)
-(paradox-require 'key-chord)
-(paradox-require 'bts-github)
-(paradox-require 'adoc-mode)
+(mapcar 'paradox-require ts-my-packages)

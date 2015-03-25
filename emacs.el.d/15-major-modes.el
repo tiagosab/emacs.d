@@ -8,10 +8,6 @@
 (add-to-list 'load-path "~/src/third-party/emacs-ditz/")
 (require 'ditz)
 
-(add-to-list 'load-path "~/lib/emacs/eldonkey/")
-(load-file "/home/tiago/etc/sensible-data/mldonkey.el")
-(require 'eldonkey)
-
 (autoload 'debian-mr-copyright-mode "debian-mr-copyright-mode"
   "Major mode for editing machine-readable copyright files (i.e. debian/copyright)."
   t)
