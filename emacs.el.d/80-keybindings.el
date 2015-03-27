@@ -26,7 +26,8 @@
 (define-key super-dict-map "t" 'tresor)
 (define-key super-dict-map "r" 'robert)
 
-(define-key mu4e-headers-mode-map "|" 'mu4e-view-pipe)
+(when (featurep 'mu4e)
+  (define-key mu4e-headers-mode-map "|" 'mu4e-view-pipe))
 
 (global-set-key (kbd "s-t") 'tresor)
 (global-set-key (kbd "s-w") 'w3m)

@@ -6,11 +6,11 @@
 ;; I prefer putting first the most recent ones.
 (defun ts-emacs ()
   (interactive)
-  (find-file "/home/tiago/.emacs"))
+  (find-file "~/.emacs"))
 
 (defun ts-ts ()
   (interactive)
-  (find-file "/home/tiago/lib/emacs/ts-goodies/tiago.el"))
+  (find-file "~/lib/emacs/ts-goodies/tiago.el"))
 
 (defun ts-emanotes ()
   "Load my emacs notes file.
