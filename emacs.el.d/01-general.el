@@ -3,7 +3,7 @@
 
 ; Max size of buffer log
 (setq large-file-warning-threshold 20000000
-      message-log-max 1000)
+      message-log-max 10000)
 
 ;; Activate commands
 (put 'erase-buffer 'disabled nil)
