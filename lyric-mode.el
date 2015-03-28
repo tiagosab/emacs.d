@@ -402,12 +402,16 @@ If FROM is given, start there, otherwise from the beginning."
             (beginning-of-line 2))))
     (insert " ")))
 
-(defun lyric-mode-newline-or-next-line ()
+(defun lyric-mode-newline-maybe-tag ()
   "If currently playing, move to the next line, else add newline."
   (interactive)
+  (newline)
   (if lyric-mode-player-process
-      (beginning-of-line 2)
-    (newline)))
+      (progn
+        (newline)
+        (lyric-mode-insert-synchronization-tag)
+        (newline)
+        (newline))))
 
 (defvar lyric-mode-map
   (let ((map (make-sparse-keymap "Lyric mode")))
@@ -422,7 +426,7 @@ If FROM is given, start there, otherwise from the beginning."
     (define-key map "\C-c3" 'lyric-mode-third-speed)
     (define-key map "\C-c4" 'lyric-mode-quarter-speed)
     (define-key map " " 'lyric-mode-space-or-tag)
-    (define-key map "\r" 'lyric-mode-newline-or-next-line)
+    (define-key map "\r" 'lyric-mode-newline-maybe-tag)
     map)
   "Keymap for `lyric-mode'.")
 
