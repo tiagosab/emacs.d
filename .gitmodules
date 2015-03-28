@@ -6,7 +6,4 @@
 	url = git@github.com:tiagosab/emacs-ditz.git
 [submodule "debian-mr-copyright-mode"]
 	path = debian-mr-copyright-mode
-	url = git+ssh://git.debian.org/git/users/fourmond/debian-mr-copyright-mode.git
-[submodule "offlineimap-el"]
-	path = offlineimap-el
-	url = git://git.naquadah.org/offlineimap-el.git
+	url = https://anonscm.debian.org/git/users/fourmond/debian-mr-copyright-mode.git
