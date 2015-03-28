@@ -83,6 +83,10 @@ more work is needed to support anything but ogg files."
   :group 'lyric-mode
   :type 'hook)
 
+(defvar lyric-mode-space-insert-tag nil
+  "If true, insert tag at point when listening to music.
+If nil (default), just insert space.")
+
 (defvar lyric-mode-slowdown 1
   "Slowdown for recording synchronization.")
 
@@ -387,14 +391,15 @@ If FROM is given, start there, otherwise from the beginning."
 (defun lyric-mode-space-or-tag ()
   "If currently playing, insert a tag, otherwise insert space."
   (interactive)
-  (if lyric-mode-player-process
+  (if (and lyric-mode-player-process
+           lyric-mode-space-insert-tag)
       (progn
-	(lyric-mode-insert-synchronization-tag)
-	(beginning-of-line 2)
-	(when lyric-mode-skip-lines
-	  (while (and (not (eobp))
-		      (looking-at lyric-mode-skip-lines))
-	    (beginning-of-line 2))))
+        (lyric-mode-insert-synchronization-tag)
+        (beginning-of-line 2)
+        (when lyric-mode-skip-lines
+          (while (and (not (eobp))
+                      (looking-at lyric-mode-skip-lines))
+            (beginning-of-line 2))))
     (insert " ")))
 
 (defun lyric-mode-newline-or-next-line ()
