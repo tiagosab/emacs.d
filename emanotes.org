@@ -30,6 +30,32 @@ On magit-status buffer:
 - magit-pull
 On magit-log buffer:
 - C-c C-a - Turn current commit into amend.
+* Portable (Windows)
+In order to use this repository on windows, from my portable usb
+stick, I had to make a site-start.el on emacs/site-lisp files
+containing:
+
+(defvar
+  usb-drive-letter 
+  (substring data-directory 0 3))
+(defvar
+  usb-home-dir 
+  (concat usb-drive-letter "Documents/emacs"))
+
+(setenv "HOME" usb-home-dir)
+
+This allows me to define my own HOME dir on this usb stick. Under home
+I have a lib dir, and on this lib dir I checkout my emacs repo.
+
+The last step is to make a symlink from my emacs file to the .emacs in
+home. This can be done under windows, from vista up, in an elevated
+cmd terminal, with
+
+mklink lib\emacs\emacs .emacs
+
+TODO: Make magit work on this setup
+TODO: Make mu4e work on this setup
+
 * Things to do, learn, search
 - [[http://tromey.com/elpa/][elpa]] - emacs package management system
 ** Info

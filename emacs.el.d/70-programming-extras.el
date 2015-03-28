@@ -19,5 +19,5 @@
                              (logior mode 64))) ; add executable bit
                     (message (concat "Saved as script: " buffer-file-name))))))
 
-(require 'pymacs)
-(pymacs-load "ropemacs" "rope-")
+(when (require 'pymacs nil 'noerror)
+  (pymacs-load "ropemacs" "rope-"))
