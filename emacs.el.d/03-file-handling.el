@@ -5,12 +5,14 @@
 (setq recentf-max-menu-items 25)
 
 
-(setq auto-save-file-name-transforms `((".*" ,temporary-file-directory t))
-      ;don't clutter my fs and put backups into tmp
-      backup-directory-alist `((".*" . ,temporary-file-directory))
-      ;; never never open a separate file dialog
-      use-file-dialog nil
-      )
+(setq
+ ;; save all autosave dirs in /tmp/, not only remote ones
+ auto-save-file-name-transforms `((".*" ,temporary-file-directory t))
+ ;; don't clutter my fs and put backups into tmp
+ backup-directory-alist `((".*" . ,temporary-file-directory))
+ ;; never never open a separate file dialog
+ use-file-dialog nil
+ )
 
 (defun ts-browse-url-browser-function (&optional url browser)
   "Pass the specified URL to the chosen browser.
