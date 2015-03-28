@@ -74,6 +74,34 @@
 (setq gnus-dired-mail-mode 'mu4e-user-agent)
 (add-hook 'dired-mode-hook 'turn-on-gnus-dired-mode)
 
+(defun mu4e~headers-redraw-get-view-window ()
+  "Close all windows, redraw the headers buffer based on the value
+of `mu4e-split-view', and return a window for the message view.
+
+Replace the currently available function with this one, available
+online as https://github.com/djcb/mu/pull/602 . Keep this on my
+config for now, as I am using mu4e from debian"
+  (mu4e-hide-other-mu4e-buffers)
+  (unless (buffer-live-p mu4e~headers-buffer)
+    (mu4e-error "No headers buffer available"))
+  (switch-to-buffer mu4e~headers-buffer)
+  ;; kill the existing view win
+  (when (buffer-live-p mu4e~view-buffer)
+    (kill-buffer mu4e~view-buffer))
+  ;; get a new view window
+  (setq mu4e~headers-view-win
+   (let* ((new-win-func
+           (cond
+            ((eq mu4e-split-view 'horizontal) ;; split horizontally
+             '(split-window-vertically mu4e-headers-visible-lines))
+            ((eq mu4e-split-view 'vertical) ;; split vertically
+             '(split-window-horizontally mu4e-headers-visible-columns)))))
+     (cond ((with-demoted-errors "Unable to split window"
+              (eval new-win-func)))
+           (t ;; no splitting; just use the currently selected one
+            (selected-window)))))
+  mu4e~headers-view-win)
+
 (provide 'ts-setup-mu4e)
 
 (require 'mu4e-contrib)
