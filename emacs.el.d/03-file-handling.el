@@ -12,12 +12,24 @@
       use-file-dialog nil
       )
 
-(defun ts-browse-url-browser-function (url &optional ignored)
-  "Pass the specified URL to the \"xdg-open\" command.
-xdg-open is a desktop utility that calls your preferred web browser.
-The optional argument IGNORED is not used."
-  (interactive (browse-url-interactive-arg "URL: "))
-  (call-process "google-chrome" nil 0 nil url))
+(defun ts-browse-url-browser-function (&optional url browser)
+  "Pass the specified URL to the chosen browser.
+Known browsers are eww (1) and google-chrome (2)"
+  (let ((url (if (eq url nil)
+                (car (browse-url-interactive-arg "U: "))
+              url))
+        (browser
+         (if (eq browser nil)
+             (read-from-minibuffer "Choose 1 for eww, 2 for chrome: ")
+           (prefix-numeric-value current-prefix-arg))))
+    (message (format "opening with '%s'" browser))
+    (cond ((equal browser "1")
+           (eww url))
+          ((equal browser "2")
+           (message "launching chrome")
+           (call-process "google-chrome" nil 0 nil url)))))
 
 (setq browse-url-browser-function
-      'ts-browse-url-browser-function)
+      '((".*emacswiki.*" . eww-browse-url)
+        (".*wikipedia.*" . eww-browse-url)
+        ("." . ts-browse-url-browser-function)))
