@@ -14,3 +14,10 @@
 
 ;; turn on word wrapping in text mode
 (add-hook 'text-mode-hook 'turn-on-auto-fill)
+
+(autoload 'lyric-mode "lyric-mode"
+  "Major mode to edit lyrics while hearing ogg file."
+  t)
+
+(add-to-list 'auto-mode-alist (cons "\\.lrc$" 'lyric-mode))
+(add-to-list 'auto-mode-alist (cons "\\.lyr$" 'lyric-mode))
