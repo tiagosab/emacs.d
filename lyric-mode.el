@@ -105,8 +105,15 @@ If nil (default), just insert space.")
 
 (make-variable-buffer-local 'lyric-mode-player-process)
 
+(defvar lyric-mode-ward-interval 10
+  "Number of seconds to go forwards or backwards.")
+
 (defvar lyric-mode-latest-time-string "0:0"
-  "The latest time observed back from the process, as a string.")
+  "The latest time observed back from the process, as a string.
+
+This variable is deprecated in the former use to start playing at
+point. It is still used for getting the last time seen in the
+process buffer.")
 
 (make-variable-buffer-local 'lyric-mode-latest-time-string)
 
@@ -238,28 +245,32 @@ If FROM is given, start there, otherwise from the beginning."
     (lyric-mode-move-overlay)
     (force-mode-line-update)))
 
-(defun lyric-mode-make-player-args (player file)
-  "Make the player args list for PLAYER to play FILE."
-  (cond
-   ((string= lyric-mode-player "ogg123")
-    (append
-     (if lyric-mode-stop-string
-	 (list "-K" lyric-mode-stop-string)
-       nil)
-     (list
-      "-k" lyric-mode-latest-time-string
-      "-y" (number-to-string lyric-mode-slowdown)
-      file)))
-   ((string= lyric-mode-player "mpg123")
-    (error "Cannot do this with this player"))))
+(defun lyric-mode-make-player-args (player file &optional start)
+  "Make the player args list for PLAYER to play FILE, at time
+START."
+  (let ((time-string (or start
+                         lyric-mode-latest-time-string)))
+    (cond
+     ((string= lyric-mode-player "ogg123")
+      (append
+       (if lyric-mode-stop-string
+           (list "-K" lyric-mode-stop-string)
+         nil)
+       (list
+        "-k" time-string
+        "-y" (number-to-string lyric-mode-slowdown)
+        file)))
+     ((string= lyric-mode-player "mpg123")
+      (error "Cannot do this with this player")))))
 
-(defun lyric-mode-resume-playing ()
-  "Resume playing of the associated music file."
+(defun lyric-mode-resume-playing (&optional start)
+  "Resume playing of the associated music file, at time START."
   (interactive)
   (lyric-mode-stop-playing)		; stop any previous player
   (let* ((player-args (lyric-mode-make-player-args
 		       lyric-mode-player
-		       lyric-mode-music-file)))
+		       lyric-mode-music-file
+               start)))
     (setq lyric-mode-player-process
 	  (apply 'start-process
 		 (format "*Player for %s*" lyric-mode-music-file)
@@ -296,36 +307,56 @@ If FROM is given, start there, otherwise from the beginning."
 (defun lyric-mode-start-playing ()
   "Start playing of the associated music file, from the beginning."
   (interactive)
-  (setq lyric-mode-latest-time-string "0:0")
-  (lyric-mode-resume-playing)
+  (lyric-mode-resume-playing "0:0")
   (message (substitute-command-keys
 	    "\\[lyric-mode-stop-playing] to stop playing; \
 \\[lyric-mode-space-or-tag] to mark the time; \
 \\[lyric-mode-newline-or-next-line] to move down")))
 
+(defun lyric-mode-backward (&optional seconds)
+  "Restart playing SECONDS before last played time. Defaults to
+lyric-mode-ward-intervel."
+  (interactive)
+  (let ((new-time (-
+                   lyric-mode-latest-time-seconds
+                   (or seconds lyric-mode-ward-interval))))
+    (lyric-mode-resume-playing
+     (lyric-time-get-string new-time))))
+
+(defun lyric-mode-forward (&optional seconds)
+  "Restart playing SECONDS after last played time. Defaults to
+lyric-mode-ward-intervel."
+  (interactive)
+  (let ((new-time (+
+                   lyric-mode-latest-time-seconds
+                   (or seconds lyric-mode-ward-interval))))
+    (lyric-mode-resume-playing
+     (lyric-time-get-string new-time))))
+
+
 (defun lyric-mode-go ()
   "Resume playing, starting at the marker above point, if possible."
   (interactive)
-  (save-excursion
-    (when (re-search-backward lyric-mode-sync-regexp
-			      (point-min) t)
-      (setq lyric-mode-latest-time-string
-	    (match-string-no-properties 1))))
-  (lyric-mode-resume-playing))
+  (lyric-mode-resume-playing
+   (save-excursion
+     (when (re-search-backward lyric-mode-sync-regexp
+                               (point-min) t)
+       (match-string-no-properties 1)))))
 
 (defun lyric-mode-play-line ()
   "Play between the two markers around point."
   (interactive)
   (save-excursion
-    (when (re-search-backward lyric-mode-sync-regexp (point-min) t)
-      (setq lyric-mode-latest-time-string (match-string-no-properties 1)))
-    (forward-char 1)		       ; don't find the same one again
-    (let ((lyric-mode-stop-string
-	   (if (re-search-forward lyric-mode-sync-regexp
-				  (point-max) t)
-	       (match-string-no-properties 1)
-	     nil)))
-      (lyric-mode-resume-playing))))
+    (let ((start
+           (when (re-search-backward lyric-mode-sync-regexp (point-min) t)
+             (match-string-no-properties 1))))
+      (forward-char 1)		       ; don't find the same one again
+      (let ((lyric-mode-stop-string
+             (if (re-search-forward lyric-mode-sync-regexp
+                                    (point-max) t)
+                 (match-string-no-properties 1)
+               nil)))
+        (lyric-mode-resume-playing start)))))
 
 (defun lyric-mode-stop-playing ()
   "Toggle playing of the associated music file."
@@ -351,6 +382,22 @@ If FROM is given, start there, otherwise from the beginning."
   (let ((start (point)))
     (insert "[" lyric-mode-latest-time-string "]")
     (lyric-mode-prepare-time-data start)))
+
+(defun lyric-time-in-seconds (timestring)
+  "Given a string in the format m:s, get number of seconds"
+  (when (string-match lyric-mode-sync-regexp timestring)
+    (+ (* 60 (string-to-number
+              (match-string-no-properties 2 timestring)))
+       (string-to-number
+        (match-string-no-properties 3 timestring)))))
+
+(defun lyric-time-get-string (time)
+  "Given a number of seconds (TIME), get string to pass to ogg123."
+  (let* (
+         (minutes (floor (/ time 60.0)))
+         (seconds (floor (- time (* minutes 60))))
+	     (centiseconds (* 100 (- time (* minutes 60) seconds))))
+    (format "%02d:%02d.%d" minutes seconds centiseconds)))
 
 (defun lyric-move-tag-at-point (delta)
   "Add DELTA to the time of the tag around point."
@@ -421,6 +468,8 @@ If FROM is given, start there, otherwise from the beginning."
     (define-key map "\C-c\C-s" 'lyric-mode-stop-playing)
     (define-key map "\C-c\C-c" 'lyric-mode-toggle-playing)
     (define-key map "\C-c\C-l" 'lyric-mode-play-line)
+    (define-key map "\C-c\C-b" 'lyric-mode-backward)
+    (define-key map "\C-c\C-f" 'lyric-mode-forward)
     (define-key map "\C-c1" 'lyric-mode-full-speed)
     (define-key map "\C-c2" 'lyric-mode-half-speed)
     (define-key map "\C-c3" 'lyric-mode-third-speed)
