@@ -44,11 +44,6 @@
 ;; Visual feedback of mark
 (setq-default transient-mark-mode t)
 
-;; show whitespace
-(require 'whitespace)
-(global-whitespace-mode t)
-(setq whitespace-global-modes t)
-
 ;; number of lines of margin at the top and bottom of a window.
 ;; recenter the window whenever point gets within this many lines of
 ;; the top or bottom of the window.
