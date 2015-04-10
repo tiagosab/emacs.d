@@ -1,6 +1,8 @@
 (require 'package)
-(add-to-list 'package-archives
-             '("melpa" . "http://melpa.milkbox.net/packages/") t)
+(setq package-archives
+      '(("gnu" . "http://elpa.gnu.org/packages/")
+        ("melpa" . "http://melpa.milkbox.net/packages/")
+        ("SC"  . "http://joseito.republika.pl/sunrise-commander/")))
 
 (setq ts-my-packages
       '(adoc-mode
@@ -20,6 +22,8 @@
         org
         mediawiki
         async
+        sunrise-commander
+        ecb
         )
       )
 
