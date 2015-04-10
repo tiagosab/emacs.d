@@ -9,3 +9,7 @@
 
 ;; ; If you want to open any file by `view-mode', add the following:
 ;; (viewer-aggressive-setup t)
+
+(autoload 'irc-maybe "ts-setup-erc"
+  "open erc"
+  'interactive)
