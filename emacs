@@ -50,3 +50,6 @@
 ; (let ((default-directory "~/lib/emacs"))
 ;   (normal-top-level-add-to-load-path '("."))
 ;   (normal-top-level-add-subdirs-to-load-path))
+
+(setq custom-file
+      (concat ts-emacs.d-dir "/85-custom.el"))
