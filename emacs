@@ -5,7 +5,8 @@
 (setq ts-library-dir (expand-file-name "~/lib/emacs"))
 (setq ts-emacs.d-dir (expand-file-name (concat ts-library-dir "/emacs.el.d")))
 (setq ts-sensitive-data-dir (expand-file-name "~/etc/sensible-data"))
-(load-file "/home/tiago/etc/sensible-data/paradox-github-token.el")
+(with-demoted-errors "File not found! %s."
+  (load-file "/home/tiago/etc/sensible-data/paradox-github-token.el"))
 
 
 ;;; Emacs Load Path
