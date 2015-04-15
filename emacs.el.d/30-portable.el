@@ -1,4 +1,4 @@
-(if (boundp ts-emacs-is-portable)
+(if (boundp 'ts-emacs-is-portable)
     (progn
       (require 'server)
       (unless (server-running-p (server-start)))))
