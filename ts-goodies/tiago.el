@@ -36,12 +36,23 @@
     (gnus-summary-pipe-output 1 'r))
   (dired "/home/tiago/comuna/bfi"))
 
-(defun ts-ip ()
-  "Discover current ip.
 
-Implemented before 2011-04-18."
+(defun ts-ip ()
+  "Show current ip.
+
+Get ip from icanhazip.com and display it as a message.
+
+Implementation note: url-handlers code on let VARLIST is copied
+from browse-url-emacs; it is ugly, but I have not found a way to
+use the original function and avoid opening a new window."
   (interactive)
-  (browse-url-emacs "http://automation.whatismyip.com/n09230945.asp"))
+  (require 'url-handlers)
+  (let ((file-name-handler-alist
+         (cons (cons url-handler-regexp 'url-file-handler)
+               file-name-handler-alist)))
+    (with-temp-buffer
+      (insert-file-contents "http://icanhazip.com")
+      (message (buffer-string)))))
 
 ;; source: http://steve.yegge.googlepages.com/my-dot-emacs-file
 (defun ts-rename-file-and-buffer (new-name)
