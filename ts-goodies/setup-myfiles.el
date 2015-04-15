@@ -8,6 +8,10 @@
   (interactive)
   (find-file "~/.emacs"))
 
+(defun ts-emacsdir ()
+  (interactive)
+  (dired ts-emacs.d-dir))
+
 (defun ts-ts ()
   (interactive)
   (find-file "~/lib/emacs/ts-goodies/tiago.el"))
