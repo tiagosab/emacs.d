@@ -18,6 +18,7 @@
 (define-key ctl-ç-map "[" 'ts-corr-brack)
 (define-key ctl-ç-map "{" 'ts-corr-curl)
 (define-key ctl-ç-map "g" 'magit-status)
+(define-key ctl-ç-map (kbd "SPC") 'whitespace-mode)
 
 (setq super-dict-map (make-sparse-keymap))
 (defalias 'super-d-prefix super-dict-map)
